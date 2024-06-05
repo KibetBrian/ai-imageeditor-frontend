@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json.schemastore.org/eslintrc.json",
+  "env": {
+    "browser": false,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "plugin:prettier/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:@tanstack/eslint-plugin-query/recommended"
+  ],
+  "plugins": ["react", "unused-imports", "import", "@typescript-eslint", "jsx-a11y", "prettier"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "no-console": "warn",
+    "react/prop-types": "off",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "jsx-a11y/interactive-supports-focus": "warn",
+    "prettier/prettier": "warn",
+    "no-unused-vars": "error",
+    "unused-imports/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "warn",
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1,
+        "maxEOF": 1
+      }
+    ],
+    "semi": ["error", "always"],
+    "indent": ["error", 2],
+    "camelcase": "error",
+    "no-magic-numbers": ["error", { "ignore": [0, 1] }],
+    "prefer-const": "error",
+    "no-unused-expressions": "error",
+    "no-use-before-define": "error",
+    "no-restricted-syntax": ["error", "WithStatement"],
+    "max-lines-per-function": ["error", { "max": 200 }],
+    "max-params": ["error", 3],
+    "max-depth": ["error", 3],
+    "max-nested-callbacks": ["error", 3],
+    "max-statements": ["error", 100],
+    "max-statements-per-line": ["error", { "max": 1 }],
+    "no-warning-comments": "warn",
+    "prefer-arrow-callback": "error",
+    "prefer-rest-params": "error",
+    "prefer-template": "error",
+    "no-shadow": "error",
+    "linebreak-style": ["error", "unix"],
+    "keyword-spacing": ["error", { "before": true, "after": true }],
+    "no-var": "error",
+    "no-useless-call": "error",
+    "eqeqeq": ["error", "always"],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "args": "after-used",
+        "ignoreRestSiblings": false,
+        "argsIgnorePattern": "^_.*?$"
+      }
+    ],
+    "import/order": [
+      "warn",
+      {
+        "groups": [
+          "type",
+          "builtin",
+          "object",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "~/**",
+            "group": "external",
+            "position": "after"
+          }
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "react/self-closing-comp": "warn",
+    "react/jsx-sort-props": [
+      "warn",
+      {
+        "callbacksLast": true,
+        "shorthandFirst": true,
+        "noSortAlphabetically": false,
+        "reservedFirst": true
+      }
+    ],
+    "padding-line-between-statements": [
+      "warn",
+      {"blankLine": "always", "prev": "*", "next": "return"},
+      {"blankLine": "always", "prev": ["const", "let", "var"], "next": "*"},
+      {
+        "blankLine": "any",
+        "prev": ["const", "let", "var"],
+        "next": ["const", "let", "var"]
+      }
+    ]
+  }
+}
