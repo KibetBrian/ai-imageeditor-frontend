@@ -1,24 +1,29 @@
+/* eslint-disable max-lines-per-function */
 "use client";
 import { fabric } from "fabric";
 import React, { useEffect, useRef, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { Button } from "@nextui-org/button";
 import { Card } from "@nextui-org/card";
+import { Slider } from "@nextui-org/slider";
+import { HexColorPicker } from "react-colorful";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 
 import { MenuControls, imageAddress } from "./constants";
 import { MenuTitle } from "./types";
+import { redoCanvasState, saveCanvasState, undoCanvasState } from "./data";
 
-import { ApplyIcon } from "@/icons/icons";
+import { ApplyIcon, BackIcon, ForwardIcon } from "@/icons/icons";
 
 const Editor = () => {
-  const [isDrawing, setIsDrawing] = useState(false);
-
-  const canvaControls = [];
-
   const [selectedControl, setSelectedControl] = useState<MenuTitle>(
     MenuControls[0].title,
   );
-  const [savedObjects, setSavedObjects] = useState<fabric.Object[]>([]);
+
+  const [penProperties, setPenProperties] = useState({
+    color: "#ffffff",
+    width: 5,
+  });
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -28,6 +33,7 @@ const Editor = () => {
   const applicationFlex = 6;
   const editorTotalFlex = 5;
   const canvasFlex = 3;
+  const canvasHeightPercentage = 0.7;
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -35,7 +41,6 @@ const Editor = () => {
         (applicationFlex / applicationLayoutTotalFlex) * window.innerWidth;
       const canvasWidth: number = (canvasFlex / editorTotalFlex) * editorWidth;
 
-      const canvasHeightPercentage = 0.7;
       const canvasHeight = Number(window.innerHeight * canvasHeightPercentage);
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,6 +51,7 @@ const Editor = () => {
         isDrawingMode: false,
         selection: true,
         centeredScaling: true,
+        freeDrawingCursor: "pen",
       });
     }
 
@@ -53,30 +59,6 @@ const Editor = () => {
       canvasInstanceRef.current?.dispose();
     };
   }, [canvasInstanceRef]);
-
-  canvasInstanceRef.current?.on("mouse:down", (e) => {
-    console.log("mouse down");
-  });
-
-  useEffect(() => {
-    if (canvasInstanceRef.current) {
-      canvasInstanceRef.current.isDrawingMode = isDrawing;
-    }
-  }, [isDrawing]);
-
-  const addRectange = () => {
-    if (!canvasInstanceRef.current) return;
-
-    const rect = new fabric.Rect({
-      left: 100,
-      top: 100,
-      fill: "red",
-      width: 20,
-      height: 20,
-    });
-
-    canvasInstanceRef.current.add(rect);
-  };
 
   const handleClickMenuControl = (title: MenuTitle) => {
     setSelectedControl(title);
@@ -89,6 +71,11 @@ const Editor = () => {
 
     if (title === "Draw") {
       if (!canvasInstanceRef.current) return;
+
+      const canvas = canvasInstanceRef.current;
+
+      canvas.freeDrawingBrush.color = penProperties.color;
+      canvas.freeDrawingBrush.width = penProperties.width;
 
       canvasInstanceRef.current.isDrawingMode = true;
 
@@ -103,7 +90,14 @@ const Editor = () => {
 
     if (title === "Image") {
       fabric.Image.fromURL(imageAddress, (img) => {
-        canvasInstanceRef.current?.add(img);
+        canvasInstanceRef.current?.setBackgroundImage(img, () => {
+          //Scale image to canvas size
+          const scale =
+            (window.innerHeight * canvasHeightPercentage) / img.width;
+
+          img.scale(scale);
+          canvasInstanceRef.current?.renderAll();
+        });
       });
     }
 
@@ -114,6 +108,26 @@ const Editor = () => {
     }
   };
 
+  useEffect(() => {
+    const canvas = canvasInstanceRef.current;
+
+    if (!canvas) return;
+
+    canvas.freeDrawingBrush.color = penProperties.color;
+    canvas.freeDrawingBrush.width = penProperties.width;
+  }, [penProperties]);
+
+  // eslint-disable-next-line no-unused-vars
+  const saveCanvas = (_e: any) => {
+    const canvas = canvasInstanceRef.current;
+
+    if (!canvas) return;
+
+    saveCanvasState({ canvas });
+  };
+
+  canvasInstanceRef.current?.on("object:modified", saveCanvas);
+
   return (
     <div className="flex p-1">
       <div className="flex-1 flex flex-col items-center">
@@ -123,6 +137,7 @@ const Editor = () => {
               <Button
                 key={control.title}
                 endContent={control.icon}
+                radius="sm"
                 variant={selectedControl === control.title ? "solid" : "light"}
                 onClick={() => handleClickMenuControl(control.title)}
               >
@@ -135,6 +150,65 @@ const Editor = () => {
       <div
         className={`flex-[${canvasFlex}] flex flex-col gap-3 justify-center items-center`}
       >
+        <div className="flex justify-between w-full items-center">
+          <Button
+            isIconOnly
+            aria-label="Like"
+            color="default"
+            radius="sm"
+            onClick={() =>
+              undoCanvasState({ canvas: canvasInstanceRef.current })
+            }
+          >
+            <BackIcon />
+          </Button>
+
+          <Card className="p-2 w-[300px]" radius="sm">
+            <Slider
+              className="max-w-md"
+              defaultValue={1}
+              label={selectedControl}
+              maxValue={100}
+              minValue={1}
+              size="sm"
+              startContent={
+                <Popover placement="bottom" showArrow={true}>
+                  <PopoverTrigger>
+                    <Card
+                      className="w-[20px] h-[20px] "
+                      radius="sm"
+                      style={{ backgroundColor: penProperties.color }}
+                    />
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <HexColorPicker
+                      color={penProperties.color}
+                      onChange={(e) =>
+                        setPenProperties((p) => ({ ...p, color: e }))
+                      }
+                    />
+                  </PopoverContent>
+                </Popover>
+              }
+              step={1}
+              onChange={(e) =>
+                setPenProperties((p) => ({ ...p, width: e as number }))
+              }
+            />
+          </Card>
+
+          <Button
+            isIconOnly
+            aria-label="Like"
+            color="default"
+            radius="sm"
+            onClick={() =>
+              redoCanvasState({ canvas: canvasInstanceRef.current })
+            }
+          >
+            <ForwardIcon />
+          </Button>
+        </div>
         <canvas ref={canvasRef} id="editor-canvas" />
         <Tabs aria-label="Options" radius="none">
           <Tab key="Sketch" title="Sketch" />
