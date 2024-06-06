@@ -48,7 +48,7 @@ export default function RootLayout({
               <div className="flex-1">
                 <SideBar />
               </div>
-              <main className="container flex-grow flex-4">{children}</main>
+              <main className="container  flex-[6]">{children}</main>
             </div>
           </div>
         </Providers>
