@@ -12,7 +12,7 @@ import { ThemeProvider } from "@mui/material/styles";
 
 import theme from "@/components/theme/theme";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({});
 
 export interface ProvidersProps {
   children: React.ReactNode;

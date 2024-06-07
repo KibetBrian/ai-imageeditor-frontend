@@ -17,7 +17,6 @@ module.exports = {
   },
   darkMode: "class",
   plugins: [
-    nextui(),
-    require('tailwind-scrollbar')({ preferredStrategy: 'pseudoelements' })
+    nextui()
   ],
 }
