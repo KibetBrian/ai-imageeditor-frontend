@@ -7,6 +7,10 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import { ThemeProvider } from "@mui/material/styles";
+
+import theme from "@/components/theme/theme";
 
 const queryClient = new QueryClient();
 
@@ -20,12 +24,16 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NextUIProvider navigate={router.push}>
-        <NextThemesProvider {...themeProps}>
-          <Toaster />
-          {children}
-        </NextThemesProvider>
-      </NextUIProvider>
+      <AppRouterCacheProvider>
+        <ThemeProvider theme={theme}>
+          <NextUIProvider navigate={router.push}>
+            <NextThemesProvider {...themeProps}>
+              <Toaster />
+              {children}
+            </NextThemesProvider>
+          </NextUIProvider>
+        </ThemeProvider>
+      </AppRouterCacheProvider>
     </QueryClientProvider>
   );
 }

@@ -235,3 +235,118 @@ export function LineIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function UploadImageIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      height={48}
+      viewBox="0 0 24 24"
+      width={48}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth={1.5}
+      >
+        <path
+          d="M21.25 13V8.5a5 5 0 0 0-5-5h-8.5a5 5 0 0 0-5 5v7a5 5 0 0 0 5 5h6.26"
+          strokeLinejoin="round"
+        />
+        <path
+          d="m3.01 17l2.74-3.2a2.2 2.2 0 0 1 2.77-.27a2.2 2.2 0 0 0 2.77-.27l2.33-2.33a4 4 0 0 1 5.16-.43l2.47 1.91M8.01 10.17a1.66 1.66 0 1 0-.02-3.32a1.66 1.66 0 0 0 .02 3.32"
+          strokeLinejoin="round"
+        />
+        <path d="M18.707 15v5" strokeMiterlimit={10} />
+        <path
+          d="m21 17.105l-1.967-1.967a.458.458 0 0 0-.652 0l-1.967 1.967"
+          strokeLinejoin="round"
+        />
+      </g>
+    </svg>
+  );
+}
+
+export function CreditsIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      height={48}
+      viewBox="0 0 24 24"
+      width={48}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M12.005 4.003c6.075 0 11 2.686 11 6v4c0 3.314-4.925 6-11 6c-5.967 0-10.824-2.591-10.995-5.823l-.005-.177v-4c0-3.314 4.925-6 11-6m0 12c-3.72 0-7.01-1.008-9-2.55v.55c0 1.882 3.883 4 9 4c5.01 0 8.838-2.03 8.995-3.882l.005-.118l.001-.55c-1.99 1.542-5.28 2.55-9.001 2.55m0-10c-5.117 0-9 2.118-9 4c0 1.882 3.883 4 9 4s9-2.118 9-4c0-1.882-3.883-4-9-4"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function CloseIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      height={48}
+      viewBox="0 0 24 24"
+      width={48}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59L7.11 5.7A.996.996 0 1 0 5.7 7.11L10.59 12L5.7 16.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 1 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function AddImageIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      height={48}
+      viewBox="0 0 24 24"
+      width={48}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M23 4v2h-3v3h-2V6h-3V4h3V1h2v3zm-8.5 7a1.5 1.5 0 1 0-.001-3.001A1.5 1.5 0 0 0 14.5 11m3.5 3.234l-.513-.57a2 2 0 0 0-2.976 0l-.656.731L9 9l-3 3.333V6h7V4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7h-2z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function ProcessImageIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      height={48}
+      viewBox="0 0 14 14"
+      width={48}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g fill="none">
+        <path
+          d="M7.391 10.677c-.35-.061-.35-.565 0-.626a3.176 3.176 0 0 0 2.556-2.437l.024-.11c.076-.347.57-.349.649-.003l.03.133a3.192 3.192 0 0 0 2.56 2.415c.353.062.353.568 0 .63a3.193 3.193 0 0 0-2.565 2.435l-.025.112c-.08.347-.573.344-.65-.002l-.02-.097a3.176 3.176 0 0 0-2.559-2.45"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M7.391 10.677c-.35-.061-.35-.565 0-.626a3.176 3.176 0 0 0 2.556-2.437l.024-.11c.076-.347.57-.349.649-.003l.03.133a3.192 3.192 0 0 0 2.56 2.415c.353.062.353.568 0 .63a3.193 3.193 0 0 0-2.565 2.435l-.025.112c-.08.347-.573.344-.65-.002l-.02-.097a3.176 3.176 0 0 0-2.559-2.45"
+          fill="currentColor"
+        />
+        <path
+          clipRule="evenodd"
+          d="M.025 8.798c0 .944.765 1.708 1.708 1.708h3.65a2.113 2.113 0 0 1 .479-1.5H1.775a.25.25 0 0 1-.25-.25V5.84l.203-.036a5.25 5.25 0 0 1 5.12 2.008l.368.487a1.423 1.423 0 0 0 1.022-1.065l.023-.104c.295-1.345 1.593-1.863 2.656-1.548V1.723c0-.943-.765-1.708-1.708-1.708H1.733C.79.015.025.78.025 1.723zm7.857-4.265a1.371 1.371 0 1 0 0-2.742a1.371 1.371 0 0 0 0 2.742"
+          fill="currentColor"
+          fillRule="evenodd"
+        />
+      </g>
+    </svg>
+  );
+}

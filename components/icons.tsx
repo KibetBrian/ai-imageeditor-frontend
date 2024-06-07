@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import * as React from "react";
 
 import { IconSvgProps } from "@/types";
