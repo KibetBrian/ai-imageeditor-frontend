@@ -216,3 +216,22 @@ export function ForwardIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function LineIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      height={48}
+      viewBox="0 0 20 20"
+      width={48}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        clipRule="evenodd"
+        d="M.5 10a.5.5 0 0 1 .5-.5h18a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5"
+        fill="currentColor"
+        fillRule="evenodd"
+      />
+    </svg>
+  );
+}

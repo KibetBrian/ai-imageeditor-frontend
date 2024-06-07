@@ -3,7 +3,7 @@ import React, { SVGProps } from "react";
 import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
 
-import { HomeIcon, PreviousGenerationsIcon } from "@/icons/icons";
+import { HomeIcon, PreviousGenerationsIcon } from "@/assets/icons/icons";
 
 interface Menu {
   title: string;

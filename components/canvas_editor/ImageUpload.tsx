@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 
 import { generateImage } from "@/apis/generate";
-import { ImageUploadIcon } from "@/icons/icons";
+import { ImageUploadIcon } from "@/assets/icons/icons";
 
 const CanvasEditor = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);

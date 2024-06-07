@@ -56,6 +56,7 @@ export function redoCanvasState({ canvas }: RedoCanvasStack) {
   if (!nextState) return;
 
   undoStack.push(nextState);
+  
   redoStack.pop();
 
   restoreCanvasState({ canvas, state: nextState });

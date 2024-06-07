@@ -13,7 +13,7 @@ import { MenuControls, imageAddress } from "./constants";
 import { MenuTitle } from "./types";
 import { redoCanvasState, saveCanvasState, undoCanvasState } from "./data";
 
-import { ApplyIcon, BackIcon, ForwardIcon } from "@/icons/icons";
+import { ApplyIcon, BackIcon, ForwardIcon } from "@/assets/icons/icons";
 
 const Editor = () => {
   const [selectedControl, setSelectedControl] = useState<MenuTitle>(
@@ -63,21 +63,15 @@ const Editor = () => {
   const handleClickMenuControl = (title: MenuTitle) => {
     setSelectedControl(title);
 
-    if (title !== "Draw") {
-      if (!canvasInstanceRef.current) return;
+    const canvas = canvasInstanceRef.current;
 
-      canvasInstanceRef.current.isDrawingMode = false;
-    }
+    if (!canvas) return;
 
     if (title === "Draw") {
-      if (!canvasInstanceRef.current) return;
-
-      const canvas = canvasInstanceRef.current;
-
       canvas.freeDrawingBrush.color = penProperties.color;
       canvas.freeDrawingBrush.width = penProperties.width;
 
-      canvasInstanceRef.current.isDrawingMode = true;
+      canvas.isDrawingMode = true;
 
       return;
     }
@@ -102,9 +96,8 @@ const Editor = () => {
     }
 
     if (title === "Select") {
-      if (!canvasInstanceRef.current) return;
-
-      canvasInstanceRef.current.isDrawingMode = false;
+      canvas.discardActiveObject();
+      canvas.renderAll();
     }
   };
 

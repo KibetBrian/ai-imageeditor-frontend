@@ -5,7 +5,7 @@ import {
   EraseIcon,
   ImageIcon,
   SelectCanvasItemIcon,
-} from "@/icons/icons";
+} from "@/assets/icons/icons";
 
 export const MenuControls: MenuControl[] = [
   {
