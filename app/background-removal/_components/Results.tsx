@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Skeleton } from "@nextui-org/skeleton";
 import { Stack } from "@mui/material";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
@@ -6,6 +6,7 @@ import { Button } from "@nextui-org/button";
 
 import { imageContainerDimensions } from "../constants";
 import { MimeTypeFile } from "../types";
+import { getImageUrlFromMimeTypeFile } from "../utils";
 
 import ImageContainer from "./ImageContainer";
 
@@ -19,6 +20,8 @@ interface ResultsProps {
 }
 
 const Results = ({ filesLength, isProcessing, files }: ResultsProps) => {
+  const downloadAnchorRef = useRef<HTMLAnchorElement | null>(null);
+
   const skeletons = [];
 
   const component = (
@@ -34,6 +37,21 @@ const Results = ({ filesLength, isProcessing, files }: ResultsProps) => {
   for (let i = 0; i < filesLength; i++) {
     skeletons.push(component);
   }
+
+  const handleDownloadAllFile = () => {
+    for (const file of files) {
+      const downloadUrl = getImageUrlFromMimeTypeFile(file);
+
+      if (!downloadAnchorRef.current) return;
+      // Create a URL for the Blob
+      downloadAnchorRef.current.href = downloadUrl;
+      downloadAnchorRef.current.download = file.name;
+      // Trigger the download
+      downloadAnchorRef.current.click();
+      // Cleanup the URL after the download
+      URL.revokeObjectURL(downloadUrl);
+    }
+  };
 
   return (
     <div className="flex-1 flex flex-col p-1 h-full ">
@@ -53,9 +71,12 @@ const Results = ({ filesLength, isProcessing, files }: ResultsProps) => {
 
       {files.length > 1 && (
         <Stack direction={"row"} flex={1} justifyContent={"flex-end"}>
+          {/* eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/anchor-is-valid */}
+          <a ref={downloadAnchorRef} style={{ display: "none" }} />
           <Button
             endContent={<DownloadImageIcon className="w-[20px]" />}
             variant="shadow"
+            onClick={handleDownloadAllFile}
           >
             Download all
           </Button>
