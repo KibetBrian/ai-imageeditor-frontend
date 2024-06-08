@@ -12,6 +12,7 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/modal";
+import ReactCompareImage from "react-compare-image";
 
 import { imageContainerDimensions } from "../constants";
 import { MimeTypeFile } from "../types";
@@ -125,7 +126,6 @@ const ImageContainer = ({ file, type, ...props }: ImageContainerProps) => {
         {isImageModalOpen && (
           <Modal
             backdrop="blur"
-            className="w-[100vw]"
             isOpen={isImageModalOpen}
             scrollBehavior="inside"
             onOpenChange={onOpenChange}
@@ -137,12 +137,9 @@ const ImageContainer = ({ file, type, ...props }: ImageContainerProps) => {
                     {file.name}
                   </ModalHeader>
                   <ModalBody>
-                    <Image
-                      alt={file.name}
-                      height={800}
-                      src={getImageUrl()}
-                      width={800}
-                      onClick={onImageModalOpen}
+                    <ReactCompareImage
+                      leftImage={getImageUrl()}
+                      rightImage="https://raw.githubusercontent.com/nerdyman/stuff/main/libs/react-compare-slider/demo-images/lady-2.png"
                     />
                   </ModalBody>
                   <ModalFooter className="flex  justify-between items-center ">

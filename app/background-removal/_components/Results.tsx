@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Skeleton } from "@nextui-org/skeleton";
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { Button } from "@nextui-org/button";
 
@@ -55,6 +55,11 @@ const Results = ({ filesLength, isProcessing, files }: ResultsProps) => {
 
   return (
     <div className="flex-1 flex flex-col p-1 h-full ">
+      {files.length === 0 && (
+        <Typography alignSelf={"center"}>
+          Processed files will appear here
+        </Typography>
+      )}
       {isProcessing && (
         <Stack direction={"row"} flex={1} flexWrap={"wrap"}>
           {...skeletons}

@@ -34,7 +34,7 @@ const BackgroundRemoval = () => {
             >
               File with name{" "}
               <Typography variant="subtitle2">{file.name}</Typography> not
-              accepted, the only accepted file extensions are .jpeg, .png and
+              accepted, the only accepted file are of the following types .jpeg, .png and
               .webp
             </Card>
           );
@@ -97,11 +97,14 @@ const BackgroundRemoval = () => {
           isProcessing={isPending}
           onDrop={onDrop}
         />
-        <Results
-          files={processedFiles}
-          filesLength={files.length}
-          isProcessing={isPending}
-        />
+
+        {(processedFiles.length > 0 || files.length > 0) && (
+          <Results
+            files={processedFiles}
+            filesLength={files.length}
+            isProcessing={isPending}
+          />
+        )}
       </div>
     </div>
   );

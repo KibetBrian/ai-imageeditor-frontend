@@ -22,6 +22,8 @@ interface UploadInterface {
   onDrop: (acceptedFiles: File[]) => void;
   handleProcess: () => void;
   isProcessing: boolean;
+  processTitle: string;
+  processingTitle: string;
 }
 
 const Upload = ({
@@ -32,6 +34,8 @@ const Upload = ({
   onDrop,
   isProcessing,
   handleProcess,
+  processTitle,
+  processingTitle,
 }: UploadInterface) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
@@ -122,7 +126,7 @@ const Upload = ({
                 variant="solid"
                 onClick={handleProcess}
               >
-                {isProcessing ? "Removing background..." : "Remove background"}
+                {isProcessing ? processingTitle : processTitle}
               </Button>
             </Stack>
           </div>
