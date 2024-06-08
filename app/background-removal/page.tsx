@@ -8,6 +8,8 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
 import Upload from "./_components/Upload";
+import Results from "./_components/Results";
+import { MimeTypeFile } from "./types";
 
 import useHandleFetchError from "@/hooks/useHandleError";
 import { appConfigs } from "@/config/app";
@@ -63,7 +65,7 @@ const BackgroundRemoval = () => {
 
     const response = await axios({
       method: "post",
-      url: `${appConfigs.backend}process/background-remover`,
+      url: `${appConfigs.backend}process/background-removal`,
       data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
@@ -73,10 +75,12 @@ const BackgroundRemoval = () => {
     return response.data;
   };
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, data, isPending } = useMutation({
     mutationFn: handleUpload,
     onError: (e) => handleFetchError({ error: e }),
   });
+
+  const processedFiles: MimeTypeFile[] = data?.files || [];
 
   return (
     <div className="h-full w-full p-2 overflow-hidden">
@@ -93,7 +97,11 @@ const BackgroundRemoval = () => {
           isProcessing={isPending}
           onDrop={onDrop}
         />
-        <div className=" flex-1">Right</div>
+        <Results
+          files={processedFiles}
+          filesLength={files.length}
+          isProcessing={isPending}
+        />
       </div>
     </div>
   );

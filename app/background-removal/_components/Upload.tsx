@@ -1,14 +1,13 @@
 import React from "react";
-import Image from "next/image";
 import { Button } from "@nextui-org/button";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { useDropzone } from "react-dropzone";
-import { Stack, Typography } from "@mui/material";
-import { Card } from "@nextui-org/card";
+import { Stack } from "@mui/material";
+
+import ImageContainer from "./ImageContainer";
 
 import {
   AddImageIcon,
-  CloseIcon,
   ProcessImageIcon,
   UploadImageIcon,
 } from "@/assets/icons/icons";
@@ -37,7 +36,7 @@ const Upload = ({
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <div className="flex-1 w-full flex-col flex justify-center h-full">
+    <div className="flex-1 p-1 w-full flex-col flex justify-center h-full">
       {files.length === 0 && (
         <Stack className="flex-2">
           <div
@@ -76,31 +75,13 @@ const Upload = ({
         >
           {files.map((f) => {
             return (
-              <Card
+              <ImageContainer
                 key={f.name}
-                isHoverable
-                className="p-1 h-[220px] space-y-1 w-[220px] mb-1 mr-1"
-              >
-                <div className="flex items-center justify-between">
-                  <Typography variant="subtitle2">
-                    {" "}
-                    {/* eslint-disable-next-line no-magic-numbers */}
-                    {f.name.split("").slice(0, 10).join("")}
-                  </Typography>
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    startContent={<CloseIcon className="w-[10px]" />}
-                    onClick={() => handleRemoveFile(f.name)}
-                  />
-                </div>
-                <Image
-                  alt={f.name}
-                  height={200}
-                  src={URL.createObjectURL(f)}
-                  width={200}
-                />
-              </Card>
+                file={f}
+                handleRemoveFile={handleRemoveFile}
+                isProcessing={isProcessing}
+                type="upload"
+              />
             );
           })}
         </Stack>
@@ -122,6 +103,7 @@ const Upload = ({
             <Stack direction={"row"} spacing={10}>
               <Button
                 className="self-end"
+                disabled={isProcessing}
                 endContent={<AddImageIcon className="w-[20px]" />}
                 radius="sm"
                 type="button"
@@ -138,7 +120,7 @@ const Upload = ({
                 variant="solid"
                 onClick={handleProcess}
               >
-                Remove Background
+                {isProcessing ? "Removing background..." : "Remove background"}
               </Button>
             </Stack>
           </div>
