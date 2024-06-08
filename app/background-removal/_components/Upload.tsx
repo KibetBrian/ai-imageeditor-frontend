@@ -36,9 +36,9 @@ const Upload = ({
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <div className="flex-1 p-1 w-full flex-col flex justify-center h-full">
+    <div className="flex-1 p-1 w-full flex-col flex   justify-center h-full">
       {files.length === 0 && (
-        <Stack className="flex-2">
+        <Stack className="flex-[2]">
           <div
             {...getRootProps()}
             className=" w-[80%] border-2 border-dashed  rounded-lg p-12 flex flex-col items-center justify-center cursor-pointer transition-colors duration-300 "

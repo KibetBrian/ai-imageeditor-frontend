@@ -47,6 +47,7 @@ const ImageContainer = ({ file, type, ...props }: ImageContainerProps) => {
   const {
     isOpen: isImageModalOpen,
     onOpen: onImageModalOpen,
+    onClose: closeImageModal,
     onOpenChange,
   } = useDisclosure();
 
@@ -63,6 +64,7 @@ const ImageContainer = ({ file, type, ...props }: ImageContainerProps) => {
     downloadAnchorRef.current.download = file.name;
     // Trigger the download
     downloadAnchorRef.current.click();
+    closeImageModal();
     // Cleanup the URL after the download
     URL.revokeObjectURL(downloadUrl);
   };
@@ -97,11 +99,8 @@ const ImageContainer = ({ file, type, ...props }: ImageContainerProps) => {
         <Image
           alt={file.name}
           height={200}
-          src={
-            type === "upload"
-              ? URL.createObjectURL(file)
-              : getImageUrlFromMimeTypeFile(file)
-          }
+          objectFit="contain"
+          src={getImageUrl()}
           width={200}
         />
         {type === "results" && (
