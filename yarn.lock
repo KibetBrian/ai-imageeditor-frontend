@@ -1069,7 +1069,7 @@
     tailwind-merge "^1.14.0"
     tailwind-variants "^0.1.20"
 
-"@nextui-org/tooltip@2.0.35":
+"@nextui-org/tooltip@2.0.35", "@nextui-org/tooltip@^2.0.35":
   version "2.0.35"
   resolved "https://registry.yarnpkg.com/@nextui-org/tooltip/-/tooltip-2.0.35.tgz#d17d7c0d67dda83fd346d514bdc656ed15e06d0c"
   integrity sha512-XnYvjyeQAlefViCV1Fvfk4PRXweVyp81yBcEN7vWrqdTyvVabTqDMQFutGv1Xdt7bENBmgyubAZY4uzfrMDfTg==

@@ -18,31 +18,40 @@ const useImageUpload = ({ multiple = false }: UseImageUpload) => {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+  const dropzoneContainerRef = useRef<HTMLDivElement | null>(null);
 
-    for (const file of acceptedFiles) {
-      if (!validTypes.includes(file.type)) {
-        toast.custom(() => {
-          return (
-            <Card
-              className="p-1 text-white"
-              radius="sm"
-              style={{ backgroundColor: commonColors.black }}
-            >
-              File with name
-              <Typography variant="subtitle2">{file.name}</Typography>
-              not accepted, the only accepted file are of the following types
-              .jpeg, .png and .webp
-            </Card>
-          );
-        });
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const validTypes = ["image/jpeg", "image/png", "image/webp"];
 
-        continue;
+      for (const file of acceptedFiles) {
+        if (!validTypes.includes(file.type)) {
+          toast.custom(() => {
+            return (
+              <Card
+                className="p-1 text-white"
+                radius="sm"
+                style={{ backgroundColor: commonColors.black }}
+              >
+                File with name
+                <Typography variant="subtitle2">{file.name}</Typography>
+                not accepted, the only accepted file are of the following types
+                .jpeg, .png and .webp
+              </Card>
+            );
+          });
+
+          continue;
+        }
+        if (multiple) {
+          setFiles((p) => [...p, file]);
+        } else {
+          setFiles([file]);
+        }
       }
-      setFiles((p) => [...p, file]);
-    }
-  }, []);
+    },
+    [multiple],
+  );
 
   const handleRemoveFile = (f: string) => {
     setFiles((p) => {
@@ -54,6 +63,10 @@ const useImageUpload = ({ multiple = false }: UseImageUpload) => {
     fileInputRef.current?.click();
   };
 
+  const handleClickDropzoneContainer = () => {
+    dropzoneContainerRef.current?.click();
+  };
+
   const DropzoneArea = () => {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
       onDrop,
@@ -62,6 +75,7 @@ const useImageUpload = ({ multiple = false }: UseImageUpload) => {
     return (
       <div {...getRootProps()}>
         <Stack
+          ref={dropzoneContainerRef}
           alignItems={"center"}
           borderRadius={5}
           height={400}
@@ -74,6 +88,7 @@ const useImageUpload = ({ multiple = false }: UseImageUpload) => {
             cursor: "pointer",
           }}
           width={500}
+          onClick={handleClickDropzoneContainer}
         >
           <ImageUploadIcon />
 
@@ -107,7 +122,9 @@ const useImageUpload = ({ multiple = false }: UseImageUpload) => {
   return {
     files,
     handleRemoveFile,
+    handleTriggerInput,
     DropzoneArea,
+    handleClickDropzoneContainer,
   };
 };
 
