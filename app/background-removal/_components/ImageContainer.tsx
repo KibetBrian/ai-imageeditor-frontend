@@ -137,10 +137,20 @@ const ImageContainer = ({ file, type, ...props }: ImageContainerProps) => {
                     {file.name}
                   </ModalHeader>
                   <ModalBody>
-                    <ReactCompareImage
-                      leftImage={getImageUrl()}
-                      rightImage="https://raw.githubusercontent.com/nerdyman/stuff/main/libs/react-compare-slider/demo-images/lady-2.png"
-                    />
+                    {type === "results" ? (
+                      <ReactCompareImage
+                        leftImage={getImageUrl()}
+                        rightImage="https://raw.githubusercontent.com/nerdyman/stuff/main/libs/react-compare-slider/demo-images/lady-2.png"
+                      />
+                    ) : (
+                      <Image
+                        alt={file.name}
+                        height={400}
+                        objectFit="contain"
+                        src={getImageUrl()}
+                        width={400}
+                      />
+                    )}
                   </ModalBody>
                   <ModalFooter className="flex  justify-between items-center ">
                     <Button onClick={onclose}>Close</Button>

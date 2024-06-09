@@ -21,10 +21,10 @@ const Home = () => {
             justifyContent={"space-between"}
             width={"90%"}
           >
-            <Button onClick={() => router.push("/generate")}>
+            <Button variant="bordered" color="primary" onClick={() => router.push("/generate")}>
               Generate Image
             </Button>
-            <Button onClick={() => router.push("editor")}>Edit Image</Button>
+            <Button variant="bordered" color="secondary" onClick={() => router.push("editor")}>Edit Image</Button>
           </Stack>
           <div className="flex flex-wrap">
             {applicationFeatures.map((f) => (

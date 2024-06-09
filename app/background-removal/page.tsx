@@ -18,6 +18,7 @@ const BackgroundRemoval = () => {
   const handleFetchError = useHandleFetchError();
 
   const [files, setFiles] = useState<File[]>([]);
+  
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -34,8 +35,8 @@ const BackgroundRemoval = () => {
             >
               File with name{" "}
               <Typography variant="subtitle2">{file.name}</Typography> not
-              accepted, the only accepted file are of the following types .jpeg, .png and
-              .webp
+              accepted, the only accepted file are of the following types .jpeg,
+              .png and .webp
             </Card>
           );
         });
@@ -95,6 +96,8 @@ const BackgroundRemoval = () => {
           handleRemoveFile={handleRemoveFile}
           handleTriggerInput={handleTriggerInput}
           isProcessing={isPending}
+          processTitle="Remove background"
+          processingTitle="Removing background..."
           onDrop={onDrop}
         />
 
