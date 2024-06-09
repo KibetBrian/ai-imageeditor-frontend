@@ -49,6 +49,10 @@ const useStack = () => {
     return undoStack[undoStack.length - 1];
   };
 
+  const getUndoStackLength = () => {
+    return undoStack.length;
+  };
+
   return {
     pushToUndoStack,
     popUndo,
@@ -57,6 +61,7 @@ const useStack = () => {
     isUndoEmpty,
     isRedoEmpty,
     peekUndo,
+    getUndoStackLength,
   };
 };
 

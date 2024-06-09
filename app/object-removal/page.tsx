@@ -37,6 +37,7 @@ const ObjectRemoval = () => {
     popRedo,
     popUndo,
     clearStack,
+    getUndoStackLength,
   } = useStack();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -148,7 +149,6 @@ const ObjectRemoval = () => {
     const canvas = canvasInstanceRef.current;
 
     if (canvas) {
-
       fabric.Image.fromURL(peekUndo(), (img) => {
         const { left, top } = imageProperties;
 
@@ -168,7 +168,7 @@ const ObjectRemoval = () => {
         canvas.renderAll();
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [peekUndo()]);
 
   const handleDownloadImage = () => {
@@ -341,12 +341,14 @@ const ObjectRemoval = () => {
               >
                 Apply
               </Button>
-              <Button
-                endContent={<DownloadImageIcon className="w-[20px]" />}
-                onClick={handleDownloadImage}
-              >
-                Download
-              </Button>
+              {getUndoStackLength() > 1 && (
+                <Button
+                  endContent={<DownloadImageIcon className="w-[20px]" />}
+                  onClick={handleDownloadImage}
+                >
+                  Download
+                </Button>
+              )}
             </Stack>
           </Stack>
         </Stack>
