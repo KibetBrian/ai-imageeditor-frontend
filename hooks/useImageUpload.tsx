@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { commonColors } from "@nextui-org/theme";
 import { toast } from "sonner";
 import { Stack, Typography } from "@mui/material";
@@ -13,44 +13,129 @@ interface UseImageUpload {
   multiple?: boolean;
 }
 
+interface ImageDimensions {
+  width: number;
+  height: number;
+}
+
+const validateImageDimensions = (dimensions: ImageDimensions) => {
+  const minSideLength = 64;
+  const maxPixelCount = 9437184;
+
+  // Check if every side is at least 64 pixels
+  if (dimensions.width < minSideLength || dimensions.height < minSideLength) {
+    return {
+      valid: false,
+      message: "file too small, minimum allowed is 64x64 pixels",
+    };
+  }
+
+  // Calculate total pixel count
+  const totalPixels = dimensions.width * dimensions.height;
+
+  // Check if total pixel count exceeds the maximum allowed
+  if (totalPixels > maxPixelCount) {
+    window.alert(totalPixels > maxPixelCount);
+
+    return {
+      valid: false,
+      message: "file too large, maximum allowed is 9437184 pixels",
+    };
+  }
+
+  return {
+    valid: true,
+    message: "",
+  };
+};
+
 const useImageUpload = ({ multiple = false }: UseImageUpload) => {
+  const validTypes = useMemo(
+    () => ["image/jpeg", "image/png", "image/webp"],
+    [],
+  );
+
   const [files, setFiles] = useState<File[]>([]);
+
+  const ToastComponent = ({
+    message,
+    fileName,
+  }: {
+    message: string;
+    fileName: string;
+  }) => {
+    return (
+      <Card
+        className="p-1 text-white"
+        radius="sm"
+        style={{ backgroundColor: commonColors.black }}
+      >
+        File with name
+        <Typography variant="subtitle2">{fileName}</Typography>
+        not accepted, {message}
+      </Card>
+    );
+  };
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const dropzoneContainerRef = useRef<HTMLDivElement | null>(null);
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      const validTypes = ["image/jpeg", "image/png", "image/webp"];
-
+    async (acceptedFiles: File[]) => {
       for (const file of acceptedFiles) {
         if (!validTypes.includes(file.type)) {
           toast.custom(() => {
             return (
-              <Card
-                className="p-1 text-white"
-                radius="sm"
-                style={{ backgroundColor: commonColors.black }}
-              >
-                File with name
-                <Typography variant="subtitle2">{file.name}</Typography>
-                not accepted, the only accepted file are of the following types
-                .jpeg, .png and .webp
-              </Card>
+              <ToastComponent
+                fileName={file.name}
+                message="the only accepted file are of the following types .jpeg,
+        .png and .webp"
+              />
             );
           });
 
           continue;
         }
-        if (multiple) {
-          setFiles((p) => [...p, file]);
-        } else {
-          setFiles([file]);
+
+        const image = new Image();
+
+        image.src = URL.createObjectURL(file);
+
+        const isValidDimensions = await new Promise((resolve) => {
+          image.onload = () => {
+            const dimensions = {
+              width: image.width,
+              height: image.height,
+            };
+
+            const { valid, message } = validateImageDimensions(dimensions);
+
+            if (!valid) {
+              toast.custom(() => {
+                return (
+                  <ToastComponent fileName={file.name} message={message} />
+                );
+              });
+            }
+
+            resolve(valid);
+          };
+        });
+
+        if (!isValidDimensions) {
+          continue;
         }
+
+        if (!multiple) {
+          setFiles([file]);
+          break;
+        }
+
+        setFiles((p) => [...p, file]);
       }
     },
-    [multiple],
+    [multiple, validTypes],
   );
 
   const handleRemoveFile = (f: string) => {

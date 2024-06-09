@@ -4,14 +4,16 @@ import React from "react";
 import { commonColors } from "@nextui-org/theme";
 import { toast } from "sonner";
 
+export type ToastPosition =
+  | "bottom-center"
+  | "bottom-left"
+  | "bottom-right"
+  | "top-center"
+  | "top-left"
+  | "top-right";
+
 interface HandleError {
-  position?:
-    | "bottom-center"
-    | "bottom-left"
-    | "bottom-right"
-    | "top-center"
-    | "top-left"
-    | "top-right";
+  position?: ToastPosition;
   error: string | any;
 }
 

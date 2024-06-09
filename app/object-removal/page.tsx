@@ -10,6 +10,9 @@ import { Slider } from "@nextui-org/slider";
 import { HexColorPicker } from "react-colorful";
 import { Card } from "@nextui-org/card";
 import { Tooltip } from "@nextui-org/tooltip";
+import { useMutation } from "@tanstack/react-query";
+
+import { dataUrlToFile } from "./utils";
 
 import useImageUpload from "@/hooks/useImageUpload";
 import {
@@ -19,8 +22,12 @@ import {
   ForwardIcon,
   UploadImageIcon,
 } from "@/assets/icons/icons";
+import useHandleFetchError from "@/hooks/useHandleError";
+import { appConfigs } from "@/config/app";
 
 const ObjectRemoval = () => {
+  const handleFetchError = useHandleFetchError();
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasInstanceRef = useRef<fabric.Canvas | null>(null);
 
@@ -127,6 +134,64 @@ const ObjectRemoval = () => {
     }
   };
 
+  const handleSuccess = (data: { message: string; image: string }) => {
+    const url = `data:image/png;base64,${data.image}`;
+
+    canvasInstanceRef.current?.clear();
+
+    fabric.Image.fromURL(url, (img) => {
+      img.left = canvasWidth * imagePaddingLeft;
+      img.top = canvasHeight * imagePaddingTop;
+
+      img.set({
+        left: (canvasWidth - img.getScaledWidth()) / 2,
+        top: (canvasHeight - img.getScaledHeight()) / 2,
+      });
+
+      canvasInstanceRef.current?.add(img);
+      canvasInstanceRef.current?.renderAll();
+    });
+  };
+
+  const { mutate, status } = useMutation({
+    mutationFn: async () => {
+      const dataUrl = canvasInstanceRef.current?.toDataURL({
+        format: "png",
+        ...imageProperties,
+        quality: 1,
+      });
+
+      if (!dataUrl) throw new Error("error processing image");
+
+      const formData = new FormData();
+
+      formData.append(
+        "files",
+        dataUrlToFile({ dataUrl, filename: "mask.png" }),
+      );
+
+      formData.append("files", selectedImage as File);
+
+      const response = await fetch(
+        `${appConfigs.backend}process/object-removal`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      const responseData = await response.json();
+
+      const isSuccess = response.status >= 200 && response.status < 300;
+
+      if (!isSuccess) throw new Error(responseData.message);
+
+      return responseData;
+    },
+    onError: (e) => handleFetchError({ error: e }),
+    onSuccess: handleSuccess,
+  });
+
   return (
     <Stack height={"100%"}>
       <Stack alignItems={"center"} flex={10} height={"100%"}>
@@ -207,7 +272,11 @@ const ObjectRemoval = () => {
               Change Image
             </Button>
             <Stack direction={"row"} spacing={2}>
-              <Button endContent={<ApplyIcon className="w-[20px]" />}>
+              <Button
+                endContent={<ApplyIcon className="w-[20px]" />}
+                isLoading={status === "pending"}
+                onClick={() => mutate()}
+              >
                 Apply
               </Button>
               <Button
