@@ -148,22 +148,28 @@ const ObjectRemoval = () => {
     const canvas = canvasInstanceRef.current;
 
     if (canvas) {
-      canvas.clear();
 
       fabric.Image.fromURL(peekUndo(), (img) => {
-        const { left, top, scaleFactor } = imageProperties;
+        const { left, top } = imageProperties;
+
+        const widthScaleFactor = canvasWidth / img.width!;
+        const heightScaleFactor = canvasHeight / img.height!;
+
+        const scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
 
         img.scale(scaleFactor);
         img.set({
           left,
           top,
         });
-
+        canvas.renderOnAddRemove = false;
+        canvas.clear();
         canvas.add(img);
         canvas.renderAll();
       });
     }
-  }, [imageProperties, peekUndo]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [peekUndo()]);
 
   const handleDownloadImage = () => {
     const dataUrl = canvasInstanceRef.current?.toDataURL({
