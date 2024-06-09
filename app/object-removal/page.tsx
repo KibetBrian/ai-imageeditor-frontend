@@ -24,9 +24,20 @@ import {
 } from "@/assets/icons/icons";
 import useHandleFetchError from "@/hooks/useHandleError";
 import { appConfigs } from "@/config/app";
+import useStack from "@/hooks/useStack";
 
 const ObjectRemoval = () => {
   const handleFetchError = useHandleFetchError();
+
+  const {
+    isRedoEmpty,
+    peekUndo,
+    pushToUndoStack,
+    isUndoEmpty,
+    popRedo,
+    popUndo,
+    clearStack,
+  } = useStack();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasInstanceRef = useRef<fabric.Canvas | null>(null);
@@ -36,12 +47,17 @@ const ObjectRemoval = () => {
     width: 5,
   });
 
-  const [imageProperties, setImageProperties] = useState({
+  const defaultImageProperties = {
     width: 0,
     height: 0,
     left: 0,
     top: 0,
-  });
+    scaleFactor: 0,
+  };
+
+  const [imageProperties, setImageProperties] = useState(
+    defaultImageProperties,
+  );
 
   const canvasWidth = 800;
   const canvasHeight = 500;
@@ -84,39 +100,70 @@ const ObjectRemoval = () => {
       canvasInstanceRef.current?.clear();
       canvasInstanceRef.current.backgroundColor = "#18181B";
 
-      fabric.Image.fromURL(URL.createObjectURL(selectedImage), (img) => {
+      const url = URL.createObjectURL(selectedImage);
+
+      fabric.Image.fromURL(url, (img) => {
+        pushToUndoStack(url);
+
         const widthScaleFactor = canvasWidth / img.width!;
         const heightScaleFactor = canvasHeight / img.height!;
 
         const scaleFactor = Math.min(widthScaleFactor, heightScaleFactor);
 
-        img.left = canvasWidth * imagePaddingLeft;
-        img.top = canvasHeight * imagePaddingTop;
+        const left = (canvasWidth - img.width! * scaleFactor) / 2;
+        const top = (canvasHeight - img.height! * scaleFactor) / 2;
 
         img.scale(scaleFactor);
         img.set({
-          left: (canvasWidth - img.getScaledWidth()) / 2,
-          top: (canvasHeight - img.getScaledHeight()) / 2,
+          left,
+          top,
         });
 
         setImageProperties({
           width: img.getScaledWidth(),
           height: img.getScaledHeight(),
-          left: img.left!,
-          top: img.top!,
+          scaleFactor,
+          left,
+          top,
         });
 
         canvasInstanceRef.current?.add(img);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedImage]);
 
   useEffect(() => {
-    if (canvasInstanceRef.current) {
-      canvasInstanceRef.current.freeDrawingBrush.color = penProperties.color;
-      canvasInstanceRef.current.freeDrawingBrush.width = penProperties.width;
+    const canvas = canvasInstanceRef.current;
+
+    if (canvas) {
+      canvas.freeDrawingBrush.color = penProperties.color;
+      canvas.freeDrawingBrush.width = penProperties.width;
     }
   }, [penProperties]);
+
+  useEffect(() => {
+    if (!imageProperties.height) return;
+
+    const canvas = canvasInstanceRef.current;
+
+    if (canvas) {
+      canvas.clear();
+
+      fabric.Image.fromURL(peekUndo(), (img) => {
+        const { left, top, scaleFactor } = imageProperties;
+
+        img.scale(scaleFactor);
+        img.set({
+          left,
+          top,
+        });
+
+        canvas.add(img);
+        canvas.renderAll();
+      });
+    }
+  }, [imageProperties, peekUndo]);
 
   const handleDownloadImage = () => {
     const dataUrl = canvasInstanceRef.current?.toDataURL({
@@ -136,6 +183,8 @@ const ObjectRemoval = () => {
 
   const handleSuccess = (data: { message: string; image: string }) => {
     const url = `data:image/png;base64,${data.image}`;
+
+    pushToUndoStack(url);
 
     canvasInstanceRef.current?.clear();
 
@@ -205,9 +254,12 @@ const ObjectRemoval = () => {
               <Button
                 isIconOnly
                 aria-label="Like"
-                color="default"
+                color={isUndoEmpty() ? "default" : "primary"}
+                disableRipple={isUndoEmpty()}
+                disabled={isUndoEmpty()}
                 radius="sm"
                 size="sm"
+                onClick={() => popUndo()}
               >
                 <BackIcon />
               </Button>
@@ -248,9 +300,12 @@ const ObjectRemoval = () => {
               <Button
                 isIconOnly
                 aria-label="Like"
-                color="default"
+                color={isRedoEmpty() ? "default" : "primary"}
+                disableRipple={isRedoEmpty()}
+                disabled={isRedoEmpty()}
                 radius="sm"
                 size="sm"
+                onClick={() => popRedo()}
               >
                 <ForwardIcon />
               </Button>
@@ -266,6 +321,7 @@ const ObjectRemoval = () => {
             <Button
               endContent={<UploadImageIcon className="w-[20px]" />}
               onClick={() => {
+                clearStack();
                 handleClickDropzoneContainer();
               }}
             >
