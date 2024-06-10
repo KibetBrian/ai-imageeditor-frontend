@@ -47,7 +47,7 @@ const SideBar = () => {
   };
 
   return (
-    <Stack mt={5} spacing={5}>
+    <Stack  spacing={5}>
       <Card className="h-[90px] p-2 space-y-2" radius="sm">
         <Stack alignItems={"start"} spacing={1} ml={2}>
           <User

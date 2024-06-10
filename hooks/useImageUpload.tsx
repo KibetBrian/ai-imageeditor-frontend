@@ -169,7 +169,7 @@ const useImageUpload = ({ multiple = false }: UseImageUpload) => {
           style={{
             borderStyle: "dashed",
             borderColor: "#fff",
-            borderWidth: "2px",
+            borderWidth: "1px",
             cursor: "pointer",
           }}
           width={500}
