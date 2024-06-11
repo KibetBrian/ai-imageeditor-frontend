@@ -73,9 +73,9 @@ const Outpainting = () => {
           stroke: "white",
           strokeWidth: 2,
         });
-
         canvasInstance.add(img);
         canvasInstance.add(rectangle);
+        canvasInstance.setActiveObject(rectangle);
         canvasInstance.renderAll();
       });
     }

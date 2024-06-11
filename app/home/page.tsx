@@ -21,10 +21,20 @@ const Home = () => {
             justifyContent={"space-between"}
             width={"90%"}
           >
-            <Button variant="bordered" color="primary" onClick={() => router.push("/generate")}>
+            <Button
+              color="primary"
+              variant="bordered"
+              onClick={() => router.push("/image-generation")}
+            >
               Generate Image
             </Button>
-            <Button variant="bordered" color="secondary" onClick={() => router.push("editor")}>Edit Image</Button>
+            <Button
+              color="secondary"
+              variant="bordered"
+              onClick={() => router.push("editor")}
+            >
+              Edit Image
+            </Button>
           </Stack>
           <div className="flex flex-wrap">
             {applicationFeatures.map((f) => (
@@ -32,8 +42,8 @@ const Home = () => {
             ))}
           </div>
         </Stack>
-        <Stack width={'80%'}>
-          <Typography alignSelf={'start'}>Recents</Typography>
+        <Stack width={"80%"}>
+          <Typography alignSelf={"start"}>Recents</Typography>
         </Stack>
       </Stack>
     </div>
