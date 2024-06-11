@@ -29,6 +29,9 @@ const models = [
   },
 ];
 
+const negativePromptsDefaultValue =
+  "ugly, deformed, noisy, blurry, distorted, out of focus, bad anatomy, extra limbs, poorly drawn face, poorly drawn hands, missing fingers, nudity, nude";
+
 const ImageGeneration = () => {
   const [negativePromptActive, setNegativePromptActive] = React.useState(false);
 
@@ -36,18 +39,19 @@ const ImageGeneration = () => {
     aspectRatiosData[0],
   );
 
+  const [aspectRationSelectOpen, setAspectRationSelectOpen] =
+    React.useState(false);
+
+  const [numberOfImages, setNumberOfImages] = React.useState(1);
+
   return (
     <Stack direction={"row"} height={"100%"} spacing={4}>
       <Stack flex={1} justifyContent={"flex-end"} pb={2}>
         <Card className="p-2" radius="sm">
           <Stack spacing={3}>
-            <Stack spacing={2}>
-              <Select
-                label="Select a model"
-                labelPlacement="outside"
-                radius="sm"
-                variant="faded"
-              >
+            <Stack>
+              <Typography variant="caption">Model</Typography>
+              <Select radius="sm" variant="faded">
                 {models.map((animal) => (
                   <SelectItem key={animal.name} variant="solid">
                     {animal.name}
@@ -55,7 +59,23 @@ const ImageGeneration = () => {
                 ))}
               </Select>
             </Stack>
-            <Divider className="my-4 h-1" />
+            <Divider className="h-[2px]" />
+            <Stack>
+              <Typography variant="caption">Number of images</Typography>
+              <Stack direction={"row"} flexWrap={"wrap"}>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Button
+                    key={i}
+                    className="mr-1 mb-1"
+                    size="sm"
+                    variant={numberOfImages === i + 1 ? "solid" : "bordered"}
+                    onClick={() => setNumberOfImages(i + 1)}
+                  >
+                    {i + 1}
+                  </Button>
+                ))}
+              </Stack>
+            </Stack>
 
             <Stack spacing={2}>
               <Stack
@@ -75,6 +95,7 @@ const ImageGeneration = () => {
               {negativePromptActive && (
                 <Textarea
                   className="max-w-xs"
+                  defaultValue={negativePromptsDefaultValue}
                   placeholder="Things you don't want to see in the image"
                   variant="faded"
                 />
@@ -114,6 +135,7 @@ const ImageGeneration = () => {
             <Stack>
               <Typography variant="caption">Aspect Ration</Typography>
               <Select
+                isOpen={aspectRationSelectOpen}
                 radius="sm"
                 startContent={<AspectRatio ratio={selectedAspectRatio.ratio} />}
                 variant="faded"
@@ -123,10 +145,25 @@ const ImageGeneration = () => {
                       aspectRatiosData[0],
                   );
                 }}
+                onOpenChange={(open) => {
+                  if (open === aspectRationSelectOpen) return;
+                  setAspectRationSelectOpen(open);
+                }}
               >
                 {aspectRatiosData.map((aR) => (
                   <SelectItem key={aR.name} variant="solid">
-                    {aR.name}
+                    {!aspectRationSelectOpen ? (
+                      aR.name
+                    ) : (
+                      <Stack
+                        alignItems={"center"}
+                        direction={"row"}
+                        justifyContent={"space-between"}
+                      >
+                        {aR.name}
+                        <AspectRatio ratio={aR.ratio} />
+                      </Stack>
+                    )}
                   </SelectItem>
                 ))}
               </Select>
