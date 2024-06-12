@@ -11,39 +11,21 @@ import { Switch } from "@nextui-org/switch";
 import { Checkbox } from "@nextui-org/checkbox";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { Skeleton } from "@nextui-org/skeleton";
-import { Image } from "@nextui-org/image";
 
-import { aspectRatiosData } from "./constants";
+import {
+  aspectRatiosData,
+  models,
+  negativePromptsDefaultValue,
+  seedMaxValue,
+} from "./constants";
+import Image from "./_components/Image";
+import LoadingImageSkeleton from "./_components/LoadingImageSkeleton";
 
 import { GeneratePhotoIcon } from "@/assets/icons/icons";
 import AspectRatio from "@/components/aspect_ratio";
 import { cn } from "@/utils/utils";
 import useHandleFetchError from "@/hooks/useHandleError";
 import { appConfigs } from "@/config/app";
-
-const models = [
-  {
-    name: "Ultra",
-    cost: 8,
-    description: "A stable diffusion model",
-  },
-  {
-    name: "Core",
-    cost: 3,
-    description: "A stable diffusion model",
-  },
-  {
-    name: "SD3",
-    cost: 4,
-    description: "A stable",
-  },
-];
-
-const negativePromptsDefaultValue =
-  "ugly, deformed, noisy, blurry, distorted, out of focus, bad anatomy, extra limbs, poorly drawn face, poorly drawn hands, missing fingers, nudity, nude";
-
-const seedMaxValue = 4294967294;
 
 const ImageGeneration = () => {
   const handleFetchError = useHandleFetchError();
@@ -61,6 +43,8 @@ const ImageGeneration = () => {
   const [negativePromptActive, setNegativePromptActive] = React.useState(false);
 
   const [selectModelOpen, setSelectModelOpen] = React.useState(false);
+
+  const [imageModalOpen, setImageModalOpen] = useState(false);
 
   const [negativePrompt, setNegativePrompt] = useState(
     negativePromptsDefaultValue,
@@ -108,34 +92,6 @@ const ImageGeneration = () => {
     },
     onSuccess: () => {},
   });
-
-  const getImageDimensions = () => {
-    if (numberOfImages === 1) {
-      return {
-        width: 500,
-        height: 400,
-      };
-    }
-
-    if (numberOfImages === 2) {
-      return {
-        width: 400,
-        height: 300,
-      };
-    }
-
-    if (numberOfImages === 3) {
-      return {
-        width: 350,
-        height: 250,
-      };
-    }
-
-    return {
-      width: 300,
-      height: 200,
-    };
-  };
 
   const images: string[] = data?.images ?? [];
 
@@ -243,24 +199,18 @@ const ImageGeneration = () => {
             <Stack
               direction={"row"}
               flexWrap={"wrap"}
-              justifyContent={numberOfImages % 2 === 1 ? "start" : "center"}
+              justifyContent={
+                numberOfImages % 2 !== 1 || numberOfImages === 1
+                  ? "center"
+                  : "start"
+              }
             >
               {isPending &&
                 Array.from({ length: numberOfImages }).map((_, i) => (
-                  <Skeleton
-                    key={`skeleton-${i}`}
-                    className="rounded-lg mr-2 mb-2"
-                    isLoaded={false}
-                  >
-                    <Card
-                      className=""
-                      radius="sm"
-                      style={{
-                        width: `${getImageDimensions().width}px`,
-                        height: `${getImageDimensions().height}px`,
-                      }}
-                    />
-                  </Skeleton>
+                  <LoadingImageSkeleton
+                    key={`img${i}`}
+                    numberOfImages={numberOfImages}
+                  />
                 ))}
 
               <Stack
@@ -272,28 +222,8 @@ const ImageGeneration = () => {
                     : "start"
                 }
               >
-                {images.map((img, i) => (
-                  <div key={img} className="mr-2 mb-2">
-                    <Card
-                      style={{
-                        width: `${getImageDimensions().width}px`,
-                        height: `${getImageDimensions().height}px`,
-                        overflow: "hidden",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <Image
-                        key={`img-${i}`}
-                        isZoomed
-                        alt="Generated image"
-                        className="rounded-lg overflow-hidden"
-                        src={img}
-                        style={{
-                          objectFit: "contain",
-                        }}
-                      />
-                    </Card>
-                  </div>
+                {images.map((img) => (
+                  <Image key={img} img={img} numberOfImages={numberOfImages} />
                 ))}
               </Stack>
             </Stack>

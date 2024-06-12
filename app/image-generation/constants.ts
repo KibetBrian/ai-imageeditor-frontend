@@ -37,3 +37,26 @@ export const aspectRatiosData = [
     ratio: "9:21",
   },
 ];
+
+export const models = [
+  {
+    name: "Ultra",
+    cost: 8,
+    description: "A stable diffusion model",
+  },
+  {
+    name: "Core",
+    cost: 3,
+    description: "A stable diffusion model",
+  },
+  {
+    name: "SD3",
+    cost: 4,
+    description: "A stable",
+  },
+];
+
+export const negativePromptsDefaultValue =
+  "ugly, deformed, noisy, blurry, distorted, out of focus, bad anatomy, extra limbs, poorly drawn face, poorly drawn hands, missing fingers, nudity, nude";
+
+export const seedMaxValue = 4294967294;

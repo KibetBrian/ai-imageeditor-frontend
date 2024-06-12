@@ -406,3 +406,20 @@ export function GeneratePhotoIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function DownloadIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      height={48}
+      viewBox="0 0 24 24"
+      width={48}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="m12 15.577l-3.539-3.538l.708-.72L11.5 13.65V5h1v8.65l2.33-2.33l.709.719zM5 19v-4.038h1V18h12v-3.038h1V19z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
