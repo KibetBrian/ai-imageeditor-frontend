@@ -1,30 +1,41 @@
+/* eslint-disable max-lines-per-function */
 "use client";
 import { Stack, Typography } from "@mui/material";
 import { Button } from "@nextui-org/button";
 import { Input, Textarea } from "@nextui-org/input";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "@nextui-org/card";
 import { Select, SelectItem } from "@nextui-org/select";
 import { Divider } from "@nextui-org/divider";
 import { Switch } from "@nextui-org/switch";
 import { Checkbox } from "@nextui-org/checkbox";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { Skeleton } from "@nextui-org/skeleton";
+import { Image } from "@nextui-org/image";
 
 import { aspectRatiosData } from "./constants";
 
 import { GeneratePhotoIcon } from "@/assets/icons/icons";
 import AspectRatio from "@/components/aspect_ratio";
+import { cn } from "@/utils/utils";
+import useHandleFetchError from "@/hooks/useHandleError";
+import { appConfigs } from "@/config/app";
 
 const models = [
   {
-    name: "Stable diffusion",
+    name: "Ultra",
+    cost: 8,
     description: "A stable diffusion model",
   },
   {
-    name: "Stable diffusion",
+    name: "Core",
+    cost: 3,
     description: "A stable diffusion model",
   },
   {
-    name: "Stable diffusion",
+    name: "SD3",
+    cost: 4,
     description: "A stable",
   },
 ];
@@ -32,8 +43,28 @@ const models = [
 const negativePromptsDefaultValue =
   "ugly, deformed, noisy, blurry, distorted, out of focus, bad anatomy, extra limbs, poorly drawn face, poorly drawn hands, missing fingers, nudity, nude";
 
+const seedMaxValue = 4294967294;
+
 const ImageGeneration = () => {
+  const handleFetchError = useHandleFetchError();
+
+  const [cost, setCost] = useState(0);
+
+  const [selectedModel, setSelectedModel] = useState(models[0]);
+
+  const [prompt, setPrompt] = useState("");
+
+  const [seedRandomized, setSeedRandomized] = useState(true);
+
+  const [seed, setSeed] = useState(0);
+
   const [negativePromptActive, setNegativePromptActive] = React.useState(false);
+
+  const [selectModelOpen, setSelectModelOpen] = React.useState(false);
+
+  const [negativePrompt, setNegativePrompt] = useState(
+    negativePromptsDefaultValue,
+  );
 
   const [selectedAspectRatio, setSelectedAspectRatio] = React.useState(
     aspectRatiosData[0],
@@ -44,6 +75,70 @@ const ImageGeneration = () => {
 
   const [numberOfImages, setNumberOfImages] = React.useState(1);
 
+  useEffect(() => {
+    setCost(selectedModel.cost * numberOfImages);
+  }, [numberOfImages, selectedModel.cost]);
+
+  const { mutate, isPending, data } = useMutation({
+    mutationKey: ["generate-image"],
+
+    mutationFn: async () => {
+      const results = await axios.post(`${appConfigs.backend}generate/image`, {
+        numberOfImages,
+        aspectRatio: selectedAspectRatio.ratio,
+        negativePrompt: negativePromptActive ? negativePrompt : "",
+        prompt,
+        seed,
+        model: selectedModel.name.toLowerCase(),
+      });
+
+      const isStatusValid = results.status >= 200 && results.status < 300;
+
+      if (!isStatusValid) {
+        throw results.data;
+      }
+
+      return results.data;
+    },
+    onError: (e) => {
+      handleFetchError({
+        error: e,
+        position: "top-right",
+      });
+    },
+    onSuccess: () => {},
+  });
+
+  const getImageDimensions = () => {
+    if (numberOfImages === 1) {
+      return {
+        width: 500,
+        height: 400,
+      };
+    }
+
+    if (numberOfImages === 2) {
+      return {
+        width: 400,
+        height: 300,
+      };
+    }
+
+    if (numberOfImages === 3) {
+      return {
+        width: 350,
+        height: 250,
+      };
+    }
+
+    return {
+      width: 300,
+      height: 200,
+    };
+  };
+
+  const images: string[] = data?.images ?? [];
+
   return (
     <Stack direction={"row"} height={"100%"} spacing={4}>
       <Stack flex={1} justifyContent={"flex-end"} pb={2}>
@@ -51,10 +146,20 @@ const ImageGeneration = () => {
           <Stack spacing={3}>
             <Stack>
               <Typography variant="caption">Model</Typography>
-              <Select radius="sm" variant="faded">
-                {models.map((animal) => (
-                  <SelectItem key={animal.name} variant="solid">
-                    {animal.name}
+              <Select
+                isRequired
+                radius="sm"
+                selectedKeys={[selectedModel.name]}
+                variant="faded"
+                onChange={(e) => {
+                  setSelectedModel(
+                    models.find((m) => m.name === e.target.value) ?? models[0],
+                  );
+                }}
+              >
+                {models.map((m) => (
+                  <SelectItem key={m.name} variant="solid">
+                    {m.name}
                   </SelectItem>
                 ))}
               </Select>
@@ -67,6 +172,7 @@ const ImageGeneration = () => {
                   <Button
                     key={i}
                     className="mr-1 mb-1"
+                    isDisabled={isPending}
                     size="sm"
                     variant={numberOfImages === i + 1 ? "solid" : "bordered"}
                     onClick={() => setNumberOfImages(i + 1)}
@@ -92,23 +198,106 @@ const ImageGeneration = () => {
                   onChange={() => setNegativePromptActive((p) => !p)}
                 />
               </Stack>
-              {negativePromptActive && (
-                <Textarea
-                  className="max-w-xs"
-                  defaultValue={negativePromptsDefaultValue}
-                  placeholder="Things you don't want to see in the image"
-                  variant="faded"
-                />
-              )}
+              <Textarea
+                className={cn(
+                  `max-w-xs ${negativePromptActive ? "block" : "hidden"}`,
+                )}
+                defaultValue={negativePromptsDefaultValue}
+                placeholder="Things you don't want to see in the image"
+                variant="faded"
+                onChange={(e) => setNegativePrompt(e.target.value)}
+              />
+            </Stack>
+
+            <Stack
+              alignItems={"center"}
+              direction={"row"}
+              justifyContent={"space-between"}
+            >
+              <Typography variant="subtitle2">
+                Cost/Successful Generation
+              </Typography>
+              <Button
+                isDisabled
+                endContent={<Typography>{cost}</Typography>}
+                size="sm"
+                variant="solid"
+              />
             </Stack>
           </Stack>
         </Card>
       </Stack>
-      <Stack flex={4} height={"100%"} justifyContent={"space-between"} pb={2}>
+      <Stack
+        flex={4}
+        height={"100%"}
+        justifyContent={"flex-end"}
+        pb={2}
+        spacing={2}
+      >
         <Stack alignItems={"center"}>
           <Typography variant="subtitle2">
             Generate images will appear hare
           </Typography>
+
+          <Stack alignItems={"center"} justifyContent={"center"} spacing={1}>
+            <Stack
+              direction={"row"}
+              flexWrap={"wrap"}
+              justifyContent={numberOfImages % 2 === 1 ? "start" : "center"}
+            >
+              {isPending &&
+                Array.from({ length: numberOfImages }).map((_, i) => (
+                  <Skeleton
+                    key={`skeleton-${i}`}
+                    className="rounded-lg mr-2 mb-2"
+                    isLoaded={false}
+                  >
+                    <Card
+                      className=""
+                      radius="sm"
+                      style={{
+                        width: `${getImageDimensions().width}px`,
+                        height: `${getImageDimensions().height}px`,
+                      }}
+                    />
+                  </Skeleton>
+                ))}
+
+              <Stack
+                direction={"row"}
+                flexWrap={"wrap"}
+                justifyContent={
+                  numberOfImages % 2 !== 1 || numberOfImages === 1
+                    ? "center"
+                    : "start"
+                }
+              >
+                {images.map((img, i) => (
+                  <div key={img} className="mr-2 mb-2">
+                    <Card
+                      style={{
+                        width: `${getImageDimensions().width}px`,
+                        height: `${getImageDimensions().height}px`,
+                        overflow: "hidden",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Image
+                        key={`img-${i}`}
+                        isZoomed
+                        alt="Generated image"
+                        className="rounded-lg overflow-hidden"
+                        src={img}
+                        style={{
+                          objectFit: "contain",
+                        }}
+                      />
+                    </Card>
+                  </div>
+                ))}
+              </Stack>
+            </Stack>
+          </Stack>
         </Stack>
         <Textarea
           classNames={{
@@ -117,8 +306,11 @@ const ImageGeneration = () => {
           endContent={
             <Button
               endContent={<GeneratePhotoIcon className="h-[20px]" />}
+              isDisabled={!prompt}
+              isLoading={isPending}
               size="sm"
               variant="solid"
+              onClick={() => mutate()}
             >
               Generate
             </Button>
@@ -127,6 +319,7 @@ const ImageGeneration = () => {
           radius="sm"
           size="lg"
           variant="faded"
+          onChange={(e) => setPrompt(e.target.value)}
         />
       </Stack>
       <Stack flex={1} justifyContent={"flex-end"} pb={2}>
@@ -170,9 +363,32 @@ const ImageGeneration = () => {
             </Stack>
 
             <Stack>
-              <Typography variant="caption">Seed</Typography>
-              <Input size="sm" variant="faded" />
-              <Checkbox defaultSelected size="sm">
+              <Typography variant="caption">
+                Seed {!seedRandomized && <span>, max: {seedMaxValue}</span>}
+              </Typography>
+
+              <Input
+                disabled={seedRandomized}
+                max={seedMaxValue}
+                size="sm"
+                type="number"
+                value={seedRandomized ? "" : String(seed)}
+                variant="faded"
+                onChange={(e) => {
+                  const number = Number(e.target.value);
+
+                  if (number > seedMaxValue) return;
+
+                  if (isNaN(number)) return;
+
+                  setSeed(number);
+                }}
+              />
+              <Checkbox
+                isSelected={seedRandomized}
+                size="sm"
+                onChange={() => setSeedRandomized((p) => !p)}
+              >
                 Randomized
               </Checkbox>
             </Stack>

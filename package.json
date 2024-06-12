@@ -76,6 +76,7 @@
 		"react-compare-image": "^3.4.0",
 		"react-dom": "18.3.1",
 		"react-dropzone": "^14.2.3",
+		"react-hook-form": "^7.51.5",
 		"react-konva": "^18.2.10",
 		"react-mask-editor": "^0.0.2",
 		"sonner": "^1.4.41",
