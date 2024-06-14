@@ -65,6 +65,7 @@
 		"fabric": "^5.3.0",
 		"fabricjs-react": "^1.2.2",
 		"framer-motion": "^11.1.1",
+		"http-status-codes": "^2.3.0",
 		"intl-messageformat": "^10.5.0",
 		"konva": "^9.3.11",
 		"next": "14.2.3",

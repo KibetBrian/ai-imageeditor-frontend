@@ -1,3 +1,5 @@
+import { ImageGenerationModel } from "./types";
+
 export const aspectRatiosData = [
   {
     name: "Widescreen",
@@ -38,19 +40,22 @@ export const aspectRatiosData = [
   },
 ];
 
-export const models = [
+export const models: ImageGenerationModel[] = [
   {
     name: "Ultra",
+    model: "ultra",
     cost: 8,
     description: "A stable diffusion model",
   },
   {
     name: "Core",
+    model: "core",
     cost: 3,
     description: "A stable diffusion model",
   },
   {
     name: "SD3",
+    model: "sd3",
     cost: 4,
     description: "A stable",
   },
