@@ -50,8 +50,6 @@ const ImageGeneration = () => {
 
   const [prompt, setPrompt] = useState("");
 
-  const [aspectRationSelectOpen, setAspectRationSelectOpen] = React.useState(false);
-
   const { mutate, isPending, data } = useMutation({
     mutationKey: ["generate-image"],
 
@@ -216,16 +214,12 @@ const ImageGeneration = () => {
             <Stack>
               <Typography variant="caption">Aspect Ratio</Typography>
               <Select
-                isOpen={aspectRationSelectOpen}
                 radius="sm"
+                selectedKeys={[aspectRatio.name]}
                 startContent={<AspectRatio ratio={aspectRatio.ratio} />}
                 variant="faded"
                 onChange={(e) => {
                   setAspectRatio(aspectRatiosData.find((aR) => aR.name === e.target.value) ?? aspectRatiosData[0]);
-                }}
-                onOpenChange={(open) => {
-                  if (open === aspectRationSelectOpen) return;
-                  setAspectRationSelectOpen(open);
                 }}
               >
                 {aspectRatiosData.map((aR) => (
