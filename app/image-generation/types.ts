@@ -11,3 +11,8 @@ export interface AspectRatio {
   name: string;
   ratio: string;
 }
+
+export interface Image {
+  url: string;
+  createdAt: string;
+}
