@@ -59,7 +59,7 @@ const ImageGeneration = () => {
   return (
     <Stack direction={"row"} height={"100%"} spacing={4}>
       <LeftSideBarSettings isGeneratingImage={isGeneratingImage} />
-      <Center images={images} isGeneratingImage={isGeneratingImage} mutate={() => mutate()} setPrompt={setPrompt} />
+      <Center images={images} isGeneratingImage={isGeneratingImage} mutate={() => mutate()} prompt={prompt} setPrompt={setPrompt} />
       <RightSideBarSettings />
     </Stack>
   );

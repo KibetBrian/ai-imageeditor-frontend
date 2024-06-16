@@ -15,11 +15,12 @@ import { GeneratePhotoIcon } from "@/assets/icons/icons";
 interface CenterProps {
   isGeneratingImage: boolean;
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
+  prompt: string;
   images: ImageType[];
   mutate: () => void;
 }
 
-const Center = ({ isGeneratingImage, setPrompt, images, mutate }: CenterProps) => {
+const Center = ({ isGeneratingImage, setPrompt, images, mutate, prompt }: CenterProps) => {
   const { numberofImagesToGenerate } = useImageGenerationStore();
 
   const cardPlacementDeterminant = numberofImagesToGenerate % 2 !== 1 || numberofImagesToGenerate === 1;

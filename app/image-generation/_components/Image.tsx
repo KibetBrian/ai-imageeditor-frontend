@@ -28,12 +28,7 @@ const Image = ({ img, numberOfImages }: ImageProp) => {
   };
 
   return (
-    <div
-      key={img}
-      className="mr-2 mb-2"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div key={img} className="mr-2 mb-2" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <Card
         style={{
           width: `${getImageDimensions(numberOfImages).width}px`,
@@ -61,32 +56,24 @@ const Image = ({ img, numberOfImages }: ImageProp) => {
             }}
           >
             <Tooltip content="Edit image" size="sm">
-              <Button
-                isIconOnly
-                endContent={
-                  <SelectCanvasItemIcon className="w-[20px] h-[20px]" />
-                }
-                onClick={() => router.push("/editor")}
-              />
+              <Button isIconOnly endContent={<SelectCanvasItemIcon className="w-[20px] h-[20px]" />} onClick={() => router.push("/editor")} />
             </Tooltip>
             <Tooltip content="Download image" size="sm">
-              <Button
-                isIconOnly
-                endContent={<DownloadIcon className="w-[20px] h-[20px]" />}
-              />
+              <Button isIconOnly endContent={<DownloadIcon className="w-[20px] h-[20px]" />} />
             </Tooltip>
           </Stack>
           <img
             alt="Generated"
+            height={getImageDimensions(numberOfImages).height}
+            loading="eager"
             src={img}
             style={{
               objectFit: "contain",
-              width: `${getImageDimensions(numberOfImages).width}px`,
-              height: `${getImageDimensions(numberOfImages).height}px`,
               // eslint-disable-next-line no-magic-numbers
               scale: hovered ? 1.05 : 1,
               transition: "scale 0.5s",
             }}
+            width={getImageDimensions(numberOfImages).width}
           />
         </Stack>
       </Card>
