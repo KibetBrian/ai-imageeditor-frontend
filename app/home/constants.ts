@@ -1,10 +1,4 @@
-type Feature =
-  | "Background removal"
-  | "Upscale"
-  | "Object Removal"
-  | "Inpainting"
-  | "Outpainting"
-  | "Generate Image";
+type Feature = "Background removal" | "Upscale" | "Object Removal" | "Inpainting" | "Outpainting" | "Generate Image";
 
 export interface FeatureData {
   title: Feature;
@@ -15,8 +9,7 @@ export interface FeatureData {
 export const applicationFeatures: FeatureData[] = [
   {
     title: "Background removal",
-    description:
-      "Remove the background from an image to isolate the main subject.",
+    description: "Remove the background from an image to isolate the main subject.",
     link: "/background-removal",
   },
   {
@@ -31,20 +24,17 @@ export const applicationFeatures: FeatureData[] = [
   },
   {
     title: "Inpainting",
-    description:
-      "Fill in missing or damaged parts of an image with appropriate content.",
+    description: "Fill in missing or damaged parts of an image with appropriate content.",
     link: "inpainting",
   },
   {
     title: "Outpainting",
-    description:
-      "Extend the edges of an image by generating additional content that matches the existing image.",
+    description: "Extend the edges of an image by generating additional content that matches the existing image.",
     link: "outpainting",
   },
   {
     title: "Generate Image",
-    description:
-      "Create a new image based on a given description or parameters.",
+    description: "Create a new image based on a given description or parameters.",
     link: "image-generation",
   },
 ];

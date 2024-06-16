@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
-import SideBar from "@/components/SideBar";
+import SideBar from "@/components/sidebar/SideBar";
 import TopBar from "@/components/TopBar";
 
 export const metadata: Metadata = {
