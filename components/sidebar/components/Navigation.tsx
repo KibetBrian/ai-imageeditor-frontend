@@ -14,10 +14,10 @@ const Navigation = () => {
 
   const mounted = useMounted();
 
-  const [selectedButton, setSelectedButton] = React.useState("Home");
+  const [selectedMenu, setSelectedMenu] = React.useState(navData[0]);
 
   const handleMenuClick = (item: NavItem) => {
-    setSelectedButton(item.title);
+    setSelectedMenu(item);
     router.push(item.path);
   };
 
@@ -37,8 +37,9 @@ const Navigation = () => {
             style={{
               marginBottom: d.title === "Home" ? "30px" : "10px",
               marginTop: d.title === "Recents" ? "30px" : "0",
+              height: "45px",
             }}
-            variant={selectedButton === d.title ? "solid" : "flat"}
+            variant={selectedMenu.title === d.title ? "solid" : "flat"}
             onClick={() => handleMenuClick(d)}
           >
             <Stack alignItems={"center"} direction={"row"} p={1} spacing={2} width={"100%"}>

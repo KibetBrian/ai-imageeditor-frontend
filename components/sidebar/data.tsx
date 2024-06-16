@@ -1,3 +1,5 @@
+import { BackgroundRemovalIcon, DrawImageIcon, ObjectRemovalIcon, UncropIcon, UpscaleIcon } from "../icons";
+
 import { NavItem } from "./types";
 
 import { HomeIcon, PreviousGenerationsIcon } from "@/assets/icons/icons";
@@ -9,28 +11,33 @@ export const navData: NavItem[] = [
     icon: HomeIcon,
   },
   {
+    title: "Background Removal",
+    path: "/background-removal",
+    icon: BackgroundRemovalIcon,
+  },
+  {
+    title: "Object Removal",
+    path: "/object-removal",
+    icon: ObjectRemovalIcon,
+  },
+  {
     title: "Upscale",
     path: "/upscale",
-    icon: HomeIcon,
+    icon: UpscaleIcon,
   },
   {
-    title: "Remove Object",
-    path: "/object-removal",
-    icon: HomeIcon,
-  },
-  {
-    title: "Add Objects",
+    title: "Object Addition",
     path: "/add-objects",
-    icon: HomeIcon,
+    icon: DrawImageIcon,
   },
   {
     title: "Uncrop",
     path: "/uncrop-image",
-    icon: HomeIcon,
+    icon: UncropIcon,
   },
   {
     title: "Recents",
-    path: "recents",
+    path: "/recents",
     icon: PreviousGenerationsIcon,
   },
 ];
