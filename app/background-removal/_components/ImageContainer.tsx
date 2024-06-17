@@ -4,15 +4,9 @@ import { Card } from "@nextui-org/card";
 import { Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { Button } from "@nextui-org/button";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-} from "@nextui-org/modal";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/modal";
 import ReactCompareImage from "react-compare-image";
+import { Tooltip } from "@nextui-org/tooltip";
 
 import { imageContainerDimensions } from "../constants";
 import { MimeTypeFile } from "../types";
@@ -38,19 +32,12 @@ interface ImageContainerWIthoutHeader extends ImageContainerBaseProps {
   file: MimeTypeFile;
 }
 
-type ImageContainerProps =
-  | ImageContainerWIthoutHeader
-  | ImageContainerWithHeader;
+type ImageContainerProps = ImageContainerWIthoutHeader | ImageContainerWithHeader;
 
 const ImageContainer = ({ file, type, ...props }: ImageContainerProps) => {
   const downloadAnchorRef = useRef<HTMLAnchorElement | null>(null);
 
-  const {
-    isOpen: isImageModalOpen,
-    onOpen: onImageModalOpen,
-    onClose: closeImageModal,
-    onOpenChange,
-  } = useDisclosure();
+  const { isOpen: isImageModalOpen, onOpen: onImageModalOpen, onClose: closeImageModal, onOpenChange } = useDisclosure();
 
   const getImageUrl = () => {
     if (type === "upload") return URL.createObjectURL(file);
@@ -73,13 +60,7 @@ const ImageContainer = ({ file, type, ...props }: ImageContainerProps) => {
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div onClick={onImageModalOpen}>
-      <Card
-        key={file.name}
-        isHoverable
-        className={cn(
-          `p-1 h-[${imageContainerDimensions.height}px] cursor-pointer space-y-1 w-[${imageContainerDimensions.width}px] mb-1 mr-1`,
-        )}
-      >
+      <Card key={file.name} isHoverable className={cn(`p-1 h-[${imageContainerDimensions.height}px] cursor-pointer space-y-1 w-[${imageContainerDimensions.width}px] mb-1 mr-1`)}>
         <div className="flex items-center justify-between">
           <Typography variant="subtitle2">
             {" "}
@@ -87,29 +68,15 @@ const ImageContainer = ({ file, type, ...props }: ImageContainerProps) => {
             {file.name.split("").slice(0, 10).join("")}
           </Typography>
           {type === "upload" && props && "isProcessing" in props && (
-            <Button
-              isIconOnly
-              disabled={props.isProcessing}
-              size="sm"
-              startContent={<CloseIcon className="w-[10px]" />}
-              onClick={() => props.handleRemoveFile(file.name)}
-            />
+            <Tooltip content="Remove" radius="sm">
+              <Button isIconOnly disabled={props.isProcessing} size="sm" startContent={<CloseIcon className="w-[10px]" />} onClick={() => props.handleRemoveFile(file.name)} />
+            </Tooltip>
           )}
         </div>
 
-        <Image
-          alt={file.name}
-          height={200}
-          objectFit="contain"
-          src={getImageUrl()}
-          width={200}
-        />
+        <Image alt={file.name} height={200} objectFit="contain" src={getImageUrl()} width={200} />
         {type === "results" && (
-          <Stack
-            alignItems={"center"}
-            direction={"row"}
-            justifyContent={"flex-end"}
-          >
+          <Stack alignItems={"center"} direction={"row"} justifyContent={"flex-end"}>
             {/* eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/anchor-is-valid */}
             <a ref={downloadAnchorRef} style={{ display: "none" }} />
             <Button
@@ -124,45 +91,33 @@ const ImageContainer = ({ file, type, ...props }: ImageContainerProps) => {
         )}
 
         {isImageModalOpen && (
-          <Modal
-            backdrop="blur"
-            isOpen={isImageModalOpen}
-            scrollBehavior="inside"
-            onOpenChange={onOpenChange}
-          >
+          <Modal backdrop="blur" radius="sm" isOpen={isImageModalOpen} scrollBehavior="inside" size="4xl" onOpenChange={onOpenChange}>
             <ModalContent>
               {(onclose) => (
                 <>
-                  <ModalHeader className="flex flex-col gap-1">
-                    {file.name}
-                  </ModalHeader>
+                  <ModalHeader className="flex flex-col gap-1">{file.name}</ModalHeader>
                   <ModalBody>
-                    {type === "results" ? (
-                      <ReactCompareImage
-                        leftImage={getImageUrl()}
-                        rightImage="https://raw.githubusercontent.com/nerdyman/stuff/main/libs/react-compare-slider/demo-images/lady-2.png"
-                      />
-                    ) : (
-                      <Image
-                        alt={file.name}
-                        height={400}
-                        objectFit="contain"
-                        src={getImageUrl()}
-                        width={400}
-                      />
-                    )}
+                    <Stack alignItems={"center"} justifyContent={"center"}>
+                      {type === "results" ? (
+                        <ReactCompareImage
+                          leftImage={getImageUrl()}
+                          rightImage="https://raw.githubusercontent.com/nerdyman/stuff/main/libs/react-compare-slider/demo-images/lady-2.png"
+                        />
+                      ) : (
+                        <Image alt={file.name} height={400} objectFit="contain" src={getImageUrl()} width={400} />
+                      )}
+                    </Stack>
                   </ModalBody>
                   <ModalFooter className="flex  justify-between items-center ">
                     <Button onClick={onclose}>Close</Button>
                     {/* eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/anchor-is-valid */}
                     <a ref={downloadAnchorRef} style={{ display: "none" }} />
                     {type === "results" && (
-                      <Button
-                        endContent={<DownloadImageIcon className="w-[20px]" />}
-                        onClick={() => handleDownload(getImageUrl())}
-                      >
-                        Download
-                      </Button>
+                      <Tooltip content="Download" radius="sm">
+                        <Button endContent={<DownloadImageIcon className="w-[20px]" />} onClick={() => handleDownload(getImageUrl())}>
+                          Download
+                        </Button>
+                      </Tooltip>
                     )}
                   </ModalFooter>
                 </>

@@ -39,7 +39,6 @@ const Navigation = () => {
               marginTop: d.title === "Recents" ? "30px" : "0",
               height: "45px",
             }}
-            className=""
             variant={selectedMenu.title === d.title ? "solid" : "flat"}
             onClick={() => handleMenuClick(d)}
           >

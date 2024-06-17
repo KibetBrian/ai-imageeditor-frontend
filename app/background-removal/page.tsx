@@ -1,12 +1,15 @@
 "use client";
 import React, { useRef, useCallback, useState } from "react";
-import { Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { toast } from "sonner";
 import { commonColors } from "@nextui-org/theme";
 import { Card } from "@nextui-org/card";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import ReactCompareImage from "react-compare-image";
 
+import ImageWithBackground from "./assets/image_with_background.jpg";
+import ImageWithoutBackground from "./assets/image_without_background.png";
 import Upload from "./_components/Upload";
 import Results from "./_components/Results";
 import { MimeTypeFile } from "./types";
@@ -18,7 +21,7 @@ const BackgroundRemoval = () => {
   const handleFetchError = useHandleFetchError();
 
   const [files, setFiles] = useState<File[]>([]);
-  
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -28,15 +31,8 @@ const BackgroundRemoval = () => {
       if (!validTypes.includes(file.type)) {
         toast.custom(() => {
           return (
-            <Card
-              className="p-1 text-white"
-              radius="sm"
-              style={{ backgroundColor: commonColors.black }}
-            >
-              File with name{" "}
-              <Typography variant="subtitle2">{file.name}</Typography> not
-              accepted, the only accepted file are of the following types .jpeg,
-              .png and .webp
+            <Card className="p-1 text-white" radius="sm" style={{ backgroundColor: commonColors.black }}>
+              File with name <Typography variant="subtitle2">{file.name}</Typography> not accepted, the only accepted file are of the following types .jpeg, .png and .webp
             </Card>
           );
         });
@@ -88,27 +84,32 @@ const BackgroundRemoval = () => {
       <div>
         <Typography variant="h5">Image Background Removal</Typography>
       </div>
-      <div className="flex h-full">
-        <Upload
-          fileInputRef={fileInputRef}
-          files={files}
-          handleProcess={mutate}
-          handleRemoveFile={handleRemoveFile}
-          handleTriggerInput={handleTriggerInput}
-          isProcessing={isPending}
-          processTitle="Remove background"
-          processingTitle="Removing background..."
-          onDrop={onDrop}
-        />
-
-        {(processedFiles.length > 0 || files.length > 0) && (
-          <Results
-            files={processedFiles}
-            filesLength={files.length}
-            isProcessing={isPending}
-          />
-        )}
-      </div>
+      <Stack direction={"row"} height={"100%"}>
+        <Stack flex={1} height={"100%"}>
+          <div className="flex flex-col h-full" style={{ justifyContent: files.length > 0 ? "start" : "center" }}>
+            <Upload
+              fileInputRef={fileInputRef}
+              files={files}
+              handleProcess={mutate}
+              handleRemoveFile={handleRemoveFile}
+              handleTriggerInput={handleTriggerInput}
+              isProcessing={isPending}
+              processTitle="Remove background"
+              processingTitle="Removing background..."
+              onDrop={onDrop}
+            />
+          </div>
+        </Stack>
+        <Stack flex={1}>
+          {processedFiles.length > 0 || files.length > 0 ? (
+            <Results files={processedFiles} filesLength={files.length} isProcessing={isPending} />
+          ) : (
+            <Stack borderRadius={"50%"}>
+              <ReactCompareImage leftImage={ImageWithBackground.src} rightImage={ImageWithoutBackground.src} />
+            </Stack>
+          )}
+        </Stack>
+      </Stack>
     </div>
   );
 };

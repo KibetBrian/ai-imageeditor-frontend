@@ -25,11 +25,7 @@ const Results = ({ filesLength, isProcessing, files }: ResultsProps) => {
   const skeletons = [];
 
   const component = (
-    <Skeleton
-      className={cn(
-        `rounded-lg mr-1 mb-1 w-[${imageContainerDimensions.width}px] h-[${imageContainerDimensions.height}px]`,
-      )}
-    >
+    <Skeleton className={cn(`rounded-lg mr-1 mb-1 w-[${imageContainerDimensions.width}px] h-[${imageContainerDimensions.height}px]`)}>
       <div className="rounded-lg w-[200px] h-[200px] bg-default-300" />
     </Skeleton>
   );
@@ -55,11 +51,8 @@ const Results = ({ filesLength, isProcessing, files }: ResultsProps) => {
 
   return (
     <div className="flex-1 flex flex-col p-1 h-full ">
-      {files.length === 0 && (
-        <Typography alignSelf={"center"}>
-          Processed files will appear here
-        </Typography>
-      )}
+      {files.length === 0 && <Typography alignSelf={"center"}>Processed files will appear here</Typography>}
+
       {isProcessing && (
         <Stack direction={"row"} flex={1} flexWrap={"wrap"}>
           {...skeletons}
@@ -78,11 +71,7 @@ const Results = ({ filesLength, isProcessing, files }: ResultsProps) => {
         <Stack direction={"row"} flex={1} justifyContent={"flex-end"}>
           {/* eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/anchor-is-valid */}
           <a ref={downloadAnchorRef} style={{ display: "none" }} />
-          <Button
-            endContent={<DownloadImageIcon className="w-[20px]" />}
-            variant="shadow"
-            onClick={handleDownloadAllFile}
-          >
+          <Button endContent={<DownloadImageIcon className="w-[20px]" />} variant="shadow" onClick={handleDownloadAllFile}>
             Download all
           </Button>
         </Stack>

@@ -34,7 +34,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={clsx("min-h-screen bg-background font-sans antialiased ", fontSans.variable)}>
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex flex-col h-screen">
-            <div className="flex-1 absolute top-[50%] left-[50%] h-[200px] w-[400px] bg-blue-950 blur-[100px]" />
+            <div className="flex-1 absolute top-[50%] right-[0%] h-[200px] w-[400px] bg-blue-950 blur-[100px]" />
+            <div className="flex-1 absolute top-[70%] left-[20%] h-[200px] w-[200px] bg-blue-950 blur-[100px]" />
             <div className="flex-1 absolute  top-[0%] left-[0%] h-[200px] w-[400px] bg-blue-950 blur-[200px]" />
             <TopBar />
             <div className="flex h-[calc(100vh-64px)] overflow-hidden w-[100vw]">

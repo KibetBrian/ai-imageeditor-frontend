@@ -6,11 +6,7 @@ import { Stack } from "@mui/material";
 
 import ImageContainer from "./ImageContainer";
 
-import {
-  AddImageIcon,
-  ProcessImageIcon,
-  UploadImageIcon,
-} from "@/assets/icons/icons";
+import { AddImageIcon, ProcessImageIcon, UploadImageIcon } from "@/assets/icons/icons";
 
 interface UploadInterface {
   files: File[];
@@ -26,17 +22,7 @@ interface UploadInterface {
   processingTitle: string;
 }
 
-const Upload = ({
-  files,
-  handleRemoveFile,
-  fileInputRef,
-  handleTriggerInput,
-  onDrop,
-  isProcessing,
-  handleProcess,
-  processTitle,
-  processingTitle,
-}: UploadInterface) => {
+const Upload = ({ files, handleRemoveFile, fileInputRef, handleTriggerInput, onDrop, isProcessing, handleProcess, processTitle, processingTitle }: UploadInterface) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
@@ -48,46 +34,19 @@ const Upload = ({
             className=" w-[80%] border-2 border-dashed  rounded-lg p-12 flex flex-col items-center justify-center cursor-pointer transition-colors duration-300 "
           >
             <UploadImageIcon className="w-12 h-12 dark:text-gray-400 mb-4" />
-            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-200 mb-2">
-              {isDragActive
-                ? "Drop the files here"
-                : "Drag and drop your files here"}
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">
-              Or click to select files
-            </p>
+            <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-200 mb-2">{isDragActive ? "Drop the files here" : "Drag and drop your files here"}</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">Or click to select files</p>
             <p>Accepted formats: .png, .jpeg, .webp</p>
-            <input
-              {...getInputProps()}
-              ref={fileInputRef}
-              multiple
-              alt="image"
-              className="hidden"
-              type="image"
-            />
+            <input {...getInputProps()} ref={fileInputRef} multiple alt="image" className="hidden" type="image" />
           </div>
         </Stack>
       )}
 
       {files.length > 0 && (
         <ScrollShadow hideScrollBar className="flex-[5]">
-          <Stack
-            direction={"row"}
-            flex={5}
-            flexWrap={"wrap"}
-            p={1}
-            style={{ overflowY: "scroll" }}
-          >
+          <Stack direction={"row"} flex={5} flexWrap={"wrap"} p={1}>
             {files.map((f) => {
-              return (
-                <ImageContainer
-                  key={f.name}
-                  file={f}
-                  handleRemoveFile={handleRemoveFile}
-                  isProcessing={isProcessing}
-                  type="upload"
-                />
-              );
+              return <ImageContainer key={f.name} file={f} handleRemoveFile={handleRemoveFile} isProcessing={isProcessing} type="upload" />;
             })}
           </Stack>
         </ScrollShadow>
@@ -97,13 +56,7 @@ const Upload = ({
         {files.length !== 0 && (
           <div className=" w-full flex items-center justify-end">
             <div {...getRootProps()}>
-              <input
-                ref={fileInputRef}
-                multiple
-                alt="image"
-                className="hidden"
-                type="image"
-              />
+              <input ref={fileInputRef} multiple alt="image" className="hidden" type="image" />
             </div>
 
             <Stack direction={"row"} spacing={10}>
@@ -118,14 +71,7 @@ const Upload = ({
               >
                 Add Image
               </Button>
-              <Button
-                disabled={isProcessing}
-                endContent={<ProcessImageIcon className="w-[20px]" />}
-                isLoading={isProcessing}
-                radius="sm"
-                variant="solid"
-                onClick={handleProcess}
-              >
+              <Button disabled={isProcessing} endContent={<ProcessImageIcon className="w-[20px]" />} isLoading={isProcessing} radius="sm" variant="solid" onClick={handleProcess}>
                 {isProcessing ? processingTitle : processTitle}
               </Button>
             </Stack>
