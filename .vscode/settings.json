@@ -1,4 +1,10 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "cSpell.words": ["Inpainting", "numberof", "Outpainted", "Outpainting"]
+  "cSpell.words": [
+    "Inpainting",
+    "numberof",
+    "Outpainted",
+    "Outpainting",
+    "Supabase"
+  ]
 }

@@ -3,11 +3,13 @@ import { Metadata, Viewport } from "next";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
+import Auth from "./auth/page";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import SideBar from "@/components/sidebar/SideBar";
 import TopBar from "@/components/TopBar";
+import { supabaseServerClient } from "@/utils/supabase";
 
 export const metadata: Metadata = {
   title: {
@@ -27,7 +29,11 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const client = supabaseServerClient();
+
+  const userData = (await client.auth.getUser()).data.user;
+
   return (
     <html suppressHydrationWarning lang="en">
       <head />
@@ -37,13 +43,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="flex-1 absolute top-[50%] right-[0%] h-[200px] w-[400px] bg-blue-950 blur-[100px]" />
             <div className="flex-1 absolute top-[70%] left-[20%] h-[200px] w-[200px] bg-blue-950 blur-[100px]" />
             <div className="flex-1 absolute  top-[0%] left-[0%] h-[200px] w-[400px] bg-blue-950 blur-[200px]" />
-            <TopBar />
-            <div className="flex h-[calc(100vh-64px)] overflow-hidden w-[100vw]">
-              <div className="flex-1">
-                <SideBar />
+            {!userData ? (
+              <Auth />
+            ) : (
+              <div>
+                <TopBar />
+                <div className="flex h-[calc(100vh-64px)] overflow-hidden w-[100vw]">
+                  <div className="flex-1">
+                    <SideBar />
+                  </div>
+                  <main className="container  flex-[6]">{children}</main>
+                </div>
               </div>
-              <main className="container  flex-[6]">{children}</main>
-            </div>
+            )}
           </div>
         </Providers>
       </body>
