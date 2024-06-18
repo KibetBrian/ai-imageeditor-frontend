@@ -13,16 +13,15 @@ const SideBar = async () => {
   const supabase = supabaseServerClient();
 
   const user = (await supabase.auth.getUser()).data.user;
-  
+
   return (
     <Stack p={1} spacing={5}>
-      <Card className="h-[90px] p-2 space-y-2" radius="sm">
+      <Card className="h-[90px] cursor-pointer p-2 space-y-2" radius="sm">
         <Stack alignItems={"start"} ml={2} spacing={1}>
           <User
             avatarProps={{
               src: user?.user_metadata.avatar_url,
             }}
-            description="Product Designer"
             name={user?.user_metadata.full_name}
           />
           <div className="flex ">
