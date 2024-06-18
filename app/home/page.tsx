@@ -15,30 +15,17 @@ const Home = () => {
     <div className="pl-5">
       <Stack alignItems={"center"} justifyContent={"center"} spacing={5}>
         <Stack spacing={5} width={"80%"}>
-          <Stack
-            alignItems={"center"}
-            direction={"row"}
-            justifyContent={"space-between"}
-            width={"90%"}
-          >
-            <Button
-              color="primary"
-              variant="bordered"
-              onClick={() => router.push("/image-generation")}
-            >
+          <Stack alignItems={"center"} direction={"row"} justifyContent={"space-between"} width={"90%"}>
+            <Button radius="sm" color="primary" variant="bordered" onClick={() => router.push("/image-generation")}>
               Generate Image
             </Button>
-            <Button
-              color="secondary"
-              variant="bordered"
-              onClick={() => router.push("editor")}
-            >
+            <Button radius="sm" color="secondary" variant="bordered" onClick={() => router.push("editor")}>
               Edit Image
             </Button>
           </Stack>
           <div className="flex flex-wrap">
-            {applicationFeatures.map((f) => (
-              <FeatureCard key={f.title} feature={f} />
+            {applicationFeatures.map((f, i) => (
+              <FeatureCard index={i} total={applicationFeatures.length} key={f.title} feature={f} />
             ))}
           </div>
         </Stack>

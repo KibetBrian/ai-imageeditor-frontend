@@ -1,8 +1,10 @@
+/* eslint-disable no-magic-numbers */
 "use client";
 import React from "react";
 import { Stack, Typography } from "@mui/material";
 import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
+import { commonColors } from "@nextui-org/theme";
 
 import { navData } from "../data";
 import { NavItem } from "../types";
@@ -30,10 +32,13 @@ const Navigation = () => {
       {navData.map((d) => {
         const Icon = d.icon;
 
+        const isSelected = selectedMenu.title === d.title;
+
         return (
           <Button
             key={d.path}
             radius="sm"
+            size="sm"
             style={{
               marginBottom: d.title === "Home" ? "30px" : "10px",
               marginTop: d.title === "Recents" ? "30px" : "0",
@@ -43,8 +48,10 @@ const Navigation = () => {
             onClick={() => handleMenuClick(d)}
           >
             <Stack alignItems={"center"} direction={"row"} p={1} spacing={2} width={"100%"}>
-              <Button isIconOnly size="sm" startContent={<Icon className={iconClasses} />} variant="light" onClick={() => handleMenuClick(d)} />
-              <Typography variant="body2">{d.title}</Typography>
+              <Button isIconOnly radius="sm" size="sm" startContent={<Icon className={iconClasses} />} variant="light" onClick={() => handleMenuClick(d)} />
+              <Typography style={{ color: isSelected ? "#fff" : commonColors.zinc[300] }} variant="body2">
+                {d.title}
+              </Typography>
             </Stack>
           </Button>
         );
