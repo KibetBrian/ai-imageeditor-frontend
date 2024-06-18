@@ -2,13 +2,14 @@ import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
 
+import TopBar from "../components/topbar/TopBar";
+
 import { Providers } from "./providers";
 import Auth from "./auth/page";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import SideBar from "@/components/sidebar/SideBar";
-import TopBar from "@/components/TopBar";
 import { supabaseServerClient } from "@/utils/supabase";
 
 export const metadata: Metadata = {

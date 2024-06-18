@@ -7,18 +7,23 @@ import { Chip } from "@nextui-org/chip";
 import Navigation from "./components/Navigation";
 
 import { CreditsIcon } from "@/assets/icons/icons";
+import { supabaseServerClient } from "@/utils/supabase";
 
-const SideBar = () => {
+const SideBar = async () => {
+  const supabase = supabaseServerClient();
+
+  const user = (await supabase.auth.getUser()).data.user;
+  
   return (
     <Stack p={1} spacing={5}>
       <Card className="h-[90px] p-2 space-y-2" radius="sm">
         <Stack alignItems={"start"} ml={2} spacing={1}>
           <User
             avatarProps={{
-              src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
+              src: user?.user_metadata.avatar_url,
             }}
             description="Product Designer"
-            name="Jane Doe"
+            name={user?.user_metadata.full_name}
           />
           <div className="flex ">
             <Chip radius="sm" startContent={<CreditsIcon className="w-[20px]" />} variant="bordered">
