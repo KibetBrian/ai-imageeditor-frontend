@@ -10,7 +10,7 @@ import Auth from "./auth/page";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import SideBar from "@/components/sidebar/SideBar";
-import { supabaseServerClient } from "@/utils/supabase";
+import { createSupabaseServerClient } from "@/utils/supabase/server";
 
 export const metadata: Metadata = {
   title: {
@@ -31,7 +31,7 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const client = supabaseServerClient();
+  const client = createSupabaseServerClient();
 
   const userData = (await client.auth.getUser()).data.user;
 

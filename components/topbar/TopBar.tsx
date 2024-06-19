@@ -3,10 +3,10 @@ import React from "react";
 
 import LogoutButton from "./LogoutButton";
 
-import { supabaseServerClient } from "@/utils/supabase";
+import { createSupabaseServerClient } from "@/utils/supabase/server";
 
 const TopBar = async () => {
-  const supabase = supabaseServerClient();
+  const supabase = createSupabaseServerClient();
 
   const user = (await supabase.auth.getUser()).data.user;
 

@@ -7,10 +7,10 @@ import { Chip } from "@nextui-org/chip";
 import Navigation from "./components/Navigation";
 
 import { CreditsIcon } from "@/assets/icons/icons";
-import { supabaseServerClient } from "@/utils/supabase";
+import { createSupabaseServerClient } from "@/utils/supabase/server";
 
 const SideBar = async () => {
-  const supabase = supabaseServerClient();
+  const supabase = createSupabaseServerClient();
 
   const user = (await supabase.auth.getUser()).data.user;
 

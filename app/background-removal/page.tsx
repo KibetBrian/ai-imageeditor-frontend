@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef, useCallback, useState } from "react";
-import { Stack, Typography } from "@mui/material";
+import { Fade, Stack, Typography } from "@mui/material";
 import { toast } from "sonner";
 import { commonColors } from "@nextui-org/theme";
 import { Card } from "@nextui-org/card";
@@ -16,9 +16,12 @@ import { MimeTypeFile } from "./types";
 
 import useHandleFetchError from "@/hooks/useHandleError";
 import { appConfigs } from "@/config/app";
+import { createSupabaseBrowserClient } from "@/utils/supabase/client";
 
 const BackgroundRemoval = () => {
   const handleFetchError = useHandleFetchError();
+
+  const supabase = createSupabaseBrowserClient();
 
   const [files, setFiles] = useState<File[]>([]);
 
@@ -66,6 +69,7 @@ const BackgroundRemoval = () => {
       data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
       },
     });
 
@@ -80,37 +84,46 @@ const BackgroundRemoval = () => {
   const processedFiles: MimeTypeFile[] = data?.files || [];
 
   return (
-    <div className="h-full w-full p-2 overflow-hidden">
-      <div>
-        <Typography variant="h5">Image Background Removal</Typography>
+    <Fade in timeout={500}>
+      <div className="h-full w-full p-2 overflow-hidden">
+        <div>
+          <Typography variant="h5">Image Background Removal</Typography>
+        </div>
+        <Stack direction={"row"} height={"100%"}>
+          <Stack flex={1} height={"100%"} justifyContent={"space-around"}>
+            <div className="flex flex-col h-full" style={{ justifyContent: files.length > 0 ? "start" : "center" }}>
+              <Upload
+                fileInputRef={fileInputRef}
+                files={files}
+                handleProcess={mutate}
+                handleRemoveFile={handleRemoveFile}
+                handleTriggerInput={handleTriggerInput}
+                isProcessing={isPending}
+                processTitle="Remove background"
+                processingTitle="Removing background..."
+                onDrop={onDrop}
+              />
+            </div>
+          </Stack>
+          <Stack flex={1}>
+            {processedFiles.length > 0 || files.length > 0 ? (
+              <Results files={processedFiles} filesLength={files.length} isProcessing={isPending} />
+            ) : (
+              <Stack>
+                <ReactCompareImage
+                  skeleton
+                  aspectRatio="taller"
+                  leftImage={ImageWithBackground.src}
+                  leftImageCss={{ borderRadius: "10px" }}
+                  rightImage={ImageWithoutBackground.src}
+                  rightImageCss={{ borderRadius: "10px" }}
+                />
+              </Stack>
+            )}
+          </Stack>
+        </Stack>
       </div>
-      <Stack direction={"row"} height={"100%"}>
-        <Stack flex={1} height={"100%"}>
-          <div className="flex flex-col h-full" style={{ justifyContent: files.length > 0 ? "start" : "center" }}>
-            <Upload
-              fileInputRef={fileInputRef}
-              files={files}
-              handleProcess={mutate}
-              handleRemoveFile={handleRemoveFile}
-              handleTriggerInput={handleTriggerInput}
-              isProcessing={isPending}
-              processTitle="Remove background"
-              processingTitle="Removing background..."
-              onDrop={onDrop}
-            />
-          </div>
-        </Stack>
-        <Stack flex={1}>
-          {processedFiles.length > 0 || files.length > 0 ? (
-            <Results files={processedFiles} filesLength={files.length} isProcessing={isPending} />
-          ) : (
-            <Stack borderRadius={"50%"}>
-              <ReactCompareImage leftImage={ImageWithBackground.src} rightImage={ImageWithoutBackground.src} />
-            </Stack>
-          )}
-        </Stack>
-      </Stack>
-    </div>
+    </Fade>
   );
 };
 

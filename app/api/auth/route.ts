@@ -1,6 +1,9 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { type CookieOptions, createServerClient } from "@supabase/ssr";
+import { StatusCodes } from "http-status-codes";
+
+import { appConfigs } from "@/config/app";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -11,6 +14,7 @@ export async function GET(request: Request) {
 
   if (code) {
     const cookieStore = cookies();
+
     const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
       cookies: {
         get(name: string) {
@@ -24,7 +28,29 @@ export async function GET(request: Request) {
         },
       },
     });
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+    const { error, data } = await supabase.auth.exchangeCodeForSession(code);
+
+    try {
+      const res = await fetch(`${appConfigs.backend}auth/sync`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${data.session?.access_token}`,
+          body: JSON.stringify({}),
+        },
+      });
+
+      if (res.status !== StatusCodes.OK) {
+        await supabase.auth.signOut();
+
+        return NextResponse.redirect(`${origin}/auth/auth-error`);
+      }
+    } catch (e) {
+      await supabase.auth.signOut();
+
+      return NextResponse.redirect(`${origin}/auth/auth-error`);
+    }
 
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`);
@@ -32,5 +58,5 @@ export async function GET(request: Request) {
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
+  return NextResponse.redirect(`${origin}/auth/auth-error`);
 }

@@ -22,7 +22,7 @@ const FeatureCard = ({ feature, index, total }: FeatureCardProps) => {
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div onClick={() => router.push(feature.link)}>
       <Grow in timeout={(index / total) * 500}>
-        <Card isHoverable className="w-[320px] h-[120px] cursor-pointer p-1 mr-2 mb-2" radius="sm" shadow="lg">
+        <Card isHoverable className="w-[320px] border-spacing-7 h-[120px] cursor-pointer p-2 mr-2 mb-2" radius="sm" shadow="lg">
           <div className="flex">
             <div className="flex-1 flex">
               <Image alt="Image with background" src={ObjectWithBackground} width={50} />
