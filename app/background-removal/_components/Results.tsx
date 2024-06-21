@@ -1,38 +1,23 @@
 import React, { useRef } from "react";
-import { Skeleton } from "@nextui-org/skeleton";
 import { Stack, Typography } from "@mui/material";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { Button } from "@nextui-org/button";
 
-import { imageContainerDimensions } from "../constants";
 import { MimeTypeFile } from "../types";
 import { getImageUrlFromMimeTypeFile } from "../utils";
 
 import ImageContainer from "./ImageContainer";
+import ImageSkeletons from "./ImageSkeletons";
 
-import { cn } from "@/utils/utils";
 import { DownloadImageIcon } from "@/assets/icons/icons";
 
 interface ResultsProps {
-  filesLength: number;
   isProcessing: boolean;
   files: MimeTypeFile[];
 }
 
-const Results = ({ filesLength, isProcessing, files }: ResultsProps) => {
+const Results = ({ isProcessing, files }: ResultsProps) => {
   const downloadAnchorRef = useRef<HTMLAnchorElement | null>(null);
-
-  const skeletons = [];
-
-  const component = (
-    <Skeleton className={cn(`rounded-lg mr-1 mb-1 w-[${imageContainerDimensions.width}px] h-[${imageContainerDimensions.height}px]`)}>
-      <div className="rounded-lg w-[200px] h-[200px] bg-default-300" />
-    </Skeleton>
-  );
-
-  for (let i = 0; i < filesLength; i++) {
-    skeletons.push(component);
-  }
 
   const handleDownloadAllFile = () => {
     for (const file of files) {
@@ -51,14 +36,6 @@ const Results = ({ filesLength, isProcessing, files }: ResultsProps) => {
 
   return (
     <div className="flex-1 flex flex-col p-1 h-full ">
-      {files.length === 0 && <Typography alignSelf={"center"}>Processed files will appear here</Typography>}
-
-      {isProcessing && (
-        <Stack direction={"row"} flex={1} flexWrap={"wrap"}>
-          {...skeletons}
-        </Stack>
-      )}
-
       <ScrollShadow hideScrollBar className="flex-[5]">
         <Stack direction={"row"} flexWrap={"wrap"}>
           {files.map((f) => {

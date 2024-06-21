@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@nextui-org/button";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { useDropzone } from "react-dropzone";
-import { Stack } from "@mui/material";
+import { Fade, Stack } from "@mui/material";
 
 import ImageContainer from "./ImageContainer";
 
@@ -43,39 +43,43 @@ const Upload = ({ files, handleRemoveFile, fileInputRef, handleTriggerInput, onD
       )}
 
       {files.length > 0 && (
-        <ScrollShadow hideScrollBar className="flex-[5]">
-          <Stack direction={"row"} flex={5} flexWrap={"wrap"} p={1}>
-            {files.map((f) => {
-              return <ImageContainer key={f.name} file={f} handleRemoveFile={handleRemoveFile} isProcessing={isProcessing} type="upload" />;
-            })}
-          </Stack>
-        </ScrollShadow>
+        <Fade in timeout={500}>
+          <ScrollShadow hideScrollBar className="flex-[5]">
+            <Stack direction={"row"} flex={5} flexWrap={"wrap"} p={1}>
+              {files.map((f) => {
+                return <ImageContainer key={f.name} file={f} handleRemoveFile={handleRemoveFile} isProcessing={isProcessing} type="upload" />;
+              })}
+            </Stack>
+          </ScrollShadow>
+        </Fade>
       )}
 
       <Stack className="w-full" flex={1}>
         {files.length !== 0 && (
-          <div className=" w-full flex items-center justify-end">
-            <div {...getRootProps()}>
-              <input ref={fileInputRef} multiple alt="image" className="hidden" type="image" />
-            </div>
+          <Fade in timeout={500}>
+            <div className=" w-full flex items-center justify-end">
+              <div {...getRootProps()}>
+                <input ref={fileInputRef} multiple alt="image" className="hidden" type="image" />
+              </div>
 
-            <Stack direction={"row"} spacing={10}>
-              <Button
-                className="self-end"
-                disabled={isProcessing}
-                endContent={<AddImageIcon className="w-[20px]" />}
-                radius="sm"
-                type="button"
-                variant="faded"
-                onClick={handleTriggerInput}
-              >
-                Add Image
-              </Button>
-              <Button disabled={isProcessing} endContent={<ProcessImageIcon className="w-[20px]" />} isLoading={isProcessing} radius="sm" variant="solid" onClick={handleProcess}>
-                {isProcessing ? processingTitle : processTitle}
-              </Button>
-            </Stack>
-          </div>
+              <Stack direction={"row"} spacing={10}>
+                <Button
+                  className="self-end"
+                  disabled={isProcessing}
+                  endContent={<AddImageIcon className="w-[20px]" />}
+                  radius="sm"
+                  type="button"
+                  variant="faded"
+                  onClick={handleTriggerInput}
+                >
+                  Add Image
+                </Button>
+                <Button disabled={isProcessing} endContent={<ProcessImageIcon className="w-[20px]" />} isLoading={isProcessing} radius="sm" variant="solid" onClick={handleProcess}>
+                  {isProcessing ? processingTitle : processTitle}
+                </Button>
+              </Stack>
+            </div>
+          </Fade>
         )}
       </Stack>
     </div>
