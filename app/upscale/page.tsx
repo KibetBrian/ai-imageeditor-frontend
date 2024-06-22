@@ -5,10 +5,6 @@ import { Textarea } from "@nextui-org/input";
 import { Slider } from "@nextui-org/slider";
 import React, { useEffect, useState } from "react";
 
-import Upload from "../background-removal/_components/Upload";
-
-import useFileUpload from "@/hooks/useFileUpload";
-
 type UpscaleMode = "Conservative" | "Creative";
 
 type OutputFormat = "jpeg" | "png" | "webp";
@@ -35,19 +31,7 @@ const Upscale = () => {
 
   const creativityDefaultCreativityValue = 0.3;
 
-  const [creativityValue, setCreativityValue] = useState(0);
 
-  const { fileInputRef, files, handleRemoveFile, handleTriggerInput, onDrop } = useFileUpload();
-
-  useEffect(() => {
-    if (upscaleMode === "Conservative") {
-      setCreativityValue(conservativeDefaultCreativityValue);
-    } else {
-      setCreativityValue(creativityDefaultCreativityValue);
-    }
-  }, [upscaleMode]);
-
-  const handleProcess = () => {};
 
   return (
     <Stack direction={"row"} height={"100%"} overflow={"hidden"}>
@@ -92,17 +76,6 @@ const Upscale = () => {
       </Stack>
       <Stack flex={2}>
         <Typography variant="subtitle2">Images to upscale</Typography>
-        <Upload
-          fileInputRef={fileInputRef}
-          files={files}
-          handleProcess={handleProcess}
-          handleRemoveFile={handleRemoveFile}
-          handleTriggerInput={handleTriggerInput}
-          isProcessing={false}
-          processTitle={"Upscale"}
-          processingTitle="Upscaling"
-          onDrop={onDrop}
-        />
       </Stack>
       <Stack flex={2}>Rigth</Stack>
     </Stack>

@@ -1,4 +1,5 @@
 import { twMerge, ClassNameValue } from "tailwind-merge";
+import { createId } from "@paralleldrive/cuid2";
 import { clsx } from "clsx";
 
 export function cn(...inputs: ClassNameValue[]) {
@@ -41,4 +42,8 @@ export const retrieveFromLocalStorage = (key: LocalStorageKey) => {
   const value = localStorage.getItem(key);
 
   return value;
+};
+
+export const generateCUID = () => {
+  return createId();
 };

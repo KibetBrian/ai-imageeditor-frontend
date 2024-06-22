@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable no-magic-numbers */
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Fade, Stack, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import ReactCompareImage from "react-compare-image";
@@ -15,18 +15,20 @@ import ImageWithoutBackground from "./assets/image_without_background.png";
 import { getProcessedImages, removeBackgroundAPI } from "./api/api";
 import ImageSkeletons from "./_components/ImageSkeletons";
 import useBackgroundImageRemovalStore from "./state";
-import ImageContainer from "./_components/ImageContainer";
+import UploadedImage from "./_components/UploadedImage";
+import ProcessedImage from "./_components/ProcessedImage";
 
 import useHandleFetchError from "@/hooks/useHandleError";
 import useImageUpload from "@/hooks/useImageUpload";
 import { AddImageIcon, ProcessImageIcon } from "@/assets/icons/icons";
+import { generateCUID } from "@/utils/utils";
 
 const BackgroundRemoval = () => {
   const handleFetchError = useHandleFetchError();
 
   const { DropzoneArea, files, handleRemoveFile, handleTriggerInput } = useImageUpload({ multiple: true });
 
-  const { imagesBeingProcessed, setImagesBeingProcessed, removeImageBeingProcessed } = useBackgroundImageRemovalStore();
+  const { imagesBeingProcessed, setImagesBeingProcessed, processedImages, setProcessedImages, removeImageBeingProcessed } = useBackgroundImageRemovalStore();
 
   const { mutate, isPending: isPosting } = useMutation({
     mutationFn: () => removeBackgroundAPI({ files }),
@@ -52,19 +54,19 @@ const BackgroundRemoval = () => {
     enabled: imagesBeingProcessed.length > 0,
   });
 
-  const processedImages = useMemo(() => {
-    return processedImagesData?.images ?? [];
-  }, [processedImagesData]);
-
   useEffect(() => {
+    const pImages = processedImagesData?.images || [];
+
     if (processedImages) {
-      for (const image of processedImages) {
+      for (const image of pImages) {
         if (image.status !== "processing") {
           removeImageBeingProcessed(image.imageId);
+
+          setProcessedImages([...processedImages, image]);
         }
       }
     }
-  }, [processedImages, processedImagesData, removeImageBeingProcessed]);
+  }, [processedImages, processedImagesData?.images, removeImageBeingProcessed, setProcessedImages]);
 
   const [skeletonProperties, setSkeletonProperties] = useState({
     skeletonsNumber: 0,
@@ -111,7 +113,7 @@ const BackgroundRemoval = () => {
                 <ScrollShadow hideScrollBar className="flex-[5]">
                   <Stack direction={"row"} flex={5} flexWrap={"wrap"} p={1}>
                     {files.map((f) => {
-                      return <ImageContainer key={f.name} file={f} handleRemoveFile={handleRemoveFile} isProcessing={skeletonProperties.isLoading} type="upload" />;
+                      return <UploadedImage key={generateCUID()} file={f} handleRemoveFile={handleRemoveFile} />;
                     })}
                   </Stack>
                 </ScrollShadow>
@@ -143,7 +145,7 @@ const BackgroundRemoval = () => {
                         variant="solid"
                         onClick={() => mutate()}
                       >
-                        Process
+                        Remove Background
                       </Button>
                     </Stack>
                   </div>
@@ -175,16 +177,12 @@ const BackgroundRemoval = () => {
                 {processedImages.length > 0 && (
                   <Stack direction={"row"} flexWrap={"wrap"}>
                     {processedImages.map((i) => {
-                      if (i.status === "failed") {
-                        return <Typography key={i.imageId}>Failed to process image</Typography>;
-                      }
-
-                      return <Stack key={i.imageId}>Image</Stack>;
+                      return <ProcessedImage key={generateCUID()} processedImage={i} />;
                     })}
                   </Stack>
                 )}
 
-                {files.length === 0 && imagesBeingProcessed.length === 0 && (
+                {files.length === 0 && imagesBeingProcessed.length === 0 && processedImages.length === 0 && (
                   <Stack height={"100%"} justifyContent={"center"} width={"100%"}>
                     <Stack height={400} width={600}>
                       <ReactCompareImage

@@ -48,9 +48,8 @@
         "printWidth": 180
       }
     ],
-    "no-unused-vars": "error",
-    "unused-imports/no-unused-vars": "off",
-    "unused-imports/no-unused-imports": "warn",
+    "unused-imports/no-unused-vars": "error",
+    "unused-imports/no-unused-imports": "error",
     "no-multiple-empty-lines": [
       "error",
       {
@@ -61,7 +60,6 @@
     "semi": ["error", "always"],
     "indent": ["error", 2],
     "camelcase": "error",
-    "no-magic-numbers": ["error", { "ignore": [0, 1] }],
     "prefer-const": "error",
     "no-unused-expressions": "error",
     "no-use-before-define": "error",
@@ -73,6 +71,8 @@
     "max-statements": ["error", 100],
     "max-statements-per-line": ["error", { "max": 1 }],
     "no-warning-comments": "warn",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-magic-numbers": "off",
     "prefer-arrow-callback": "error",
     "prefer-rest-params": "error",
     "prefer-template": "error",
@@ -82,14 +82,6 @@
     "no-var": "error",
     "no-useless-call": "error",
     "eqeqeq": ["error", "always"],
-    "@typescript-eslint/no-unused-vars": [
-      "warn",
-      {
-        "args": "after-used",
-        "ignoreRestSiblings": false,
-        "argsIgnorePattern": "^_.*?$"
-      }
-    ],
     "import/order": [
       "warn",
       {

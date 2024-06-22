@@ -41,6 +41,7 @@
 		"@nextui-org/theme": "2.2.4",
 		"@nextui-org/tooltip": "^2.0.35",
 		"@nextui-org/user": "^2.0.30",
+		"@paralleldrive/cuid2": "^2.2.2",
 		"@react-aria/ssr": "^3.9.2",
 		"@react-aria/visually-hidden": "^3.8.10",
 		"@supabase/ssr": "^0.3.0",
