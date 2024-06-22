@@ -13,6 +13,9 @@ module.exports = {
         sans: ["var(--font-sans)"],
         mono: ["var(--font-geist-mono)"],
       },
+      animation:{
+        'spin-slow': 'spin 35s linear infinite'
+      }
     },
   },
   darkMode: "class",

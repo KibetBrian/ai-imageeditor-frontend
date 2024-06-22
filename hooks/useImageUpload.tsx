@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 "use client";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { commonColors } from "@nextui-org/theme";
@@ -35,8 +36,6 @@ const validateImageDimensions = (dimensions: ImageDimensions) => {
 
   // Check if total pixel count exceeds the maximum allowed
   if (totalPixels > maxPixelCount) {
-    window.alert(totalPixels > maxPixelCount);
-
     return {
       valid: false,
       message: "file too large, maximum allowed is 9437184 pixels",
@@ -50,26 +49,13 @@ const validateImageDimensions = (dimensions: ImageDimensions) => {
 };
 
 const useImageUpload = ({ multiple = false }: UseImageUpload) => {
-  const validTypes = useMemo(
-    () => ["image/jpeg", "image/png", "image/webp"],
-    [],
-  );
+  const validTypes = useMemo(() => ["image/jpeg", "image/png", "image/webp"], []);
 
   const [files, setFiles] = useState<File[]>([]);
 
-  const ToastComponent = ({
-    message,
-    fileName,
-  }: {
-    message: string;
-    fileName: string;
-  }) => {
+  const ToastComponent = ({ message, fileName }: { message: string; fileName: string }) => {
     return (
-      <Card
-        className="p-1 text-white"
-        radius="sm"
-        style={{ backgroundColor: commonColors.black }}
-      >
+      <Card className="p-1 text-white" radius="sm" style={{ backgroundColor: commonColors.black }}>
         File with name
         <Typography variant="subtitle2">{fileName}</Typography>
         not accepted, {message}
@@ -113,9 +99,7 @@ const useImageUpload = ({ multiple = false }: UseImageUpload) => {
 
             if (!valid) {
               toast.custom(() => {
-                return (
-                  <ToastComponent fileName={file.name} message={message} />
-                );
+                return <ToastComponent fileName={file.name} message={message} />;
               });
             }
 
@@ -162,14 +146,15 @@ const useImageUpload = ({ multiple = false }: UseImageUpload) => {
         <Stack
           ref={dropzoneContainerRef}
           alignItems={"center"}
-          borderRadius={5}
+          borderRadius={2}
           height={400}
           justifyContent={"center"}
           spacing={4}
           style={{
             borderStyle: "dashed",
-            borderColor: "#fff",
-            borderWidth: "1px",
+            borderColor: commonColors.zinc[500],
+            borderWidth: "3px",
+            boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.75)",
             cursor: "pointer",
           }}
           width={500}
@@ -177,22 +162,10 @@ const useImageUpload = ({ multiple = false }: UseImageUpload) => {
         >
           <ImageUploadIcon />
 
-          <input
-            {...getInputProps()}
-            ref={fileInputRef}
-            accept="image/jpeg, image/png, image/webp"
-            alt="image"
-            className="hidden"
-            multiple={multiple}
-            type="file"
-          />
+          <input {...getInputProps()} ref={fileInputRef} accept="image/jpeg, image/png, image/webp" alt="image" className="hidden" multiple={multiple} type="file" />
 
           <Stack alignItems={"center"} spacing={1}>
-            <Typography variant="subtitle1">
-              {isDragActive
-                ? "Drop your images here"
-                : "Drag and drop your image here"}
-            </Typography>
+            <Typography variant="subtitle1">{isDragActive ? "Drop your images here" : "Drag and drop your image here"}</Typography>
             OR
             <Typography variant="subtitle1">Click to select image</Typography>
           </Stack>

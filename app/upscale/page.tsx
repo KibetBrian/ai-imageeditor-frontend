@@ -16,22 +16,18 @@ type OutputFormat = "jpeg" | "png" | "webp";
 const upscaleModes = [
   {
     title: "Conservative",
-    description:
-      "Conservative Upscale preserves image details with minimal alterations",
+    description: "Conservative Upscale preserves image details with minimal alterations",
   },
   {
     title: "Creative",
-    description:
-      "Creative Upscale is ideal for degraded images, heavily reimagining them (adjustable creativity scale).",
+    description: "Creative Upscale is ideal for degraded images, heavily reimagining them (adjustable creativity scale).",
   },
 ];
 
 const outputFormats: OutputFormat[] = ["jpeg", "png", "webp"];
 
 const Upscale = () => {
-  const [upscaleMode, setUpscaleMode] = useState<UpscaleMode>(
-    upscaleModes[0].title as UpscaleMode,
-  );
+  const [upscaleMode, setUpscaleMode] = useState<UpscaleMode>(upscaleModes[0].title as UpscaleMode);
 
   const [outputMode, setOutputMode] = useState(outputFormats[0]);
 
@@ -41,8 +37,7 @@ const Upscale = () => {
 
   const [creativityValue, setCreativityValue] = useState(0);
 
-  const { fileInputRef, files, handleRemoveFile, handleTriggerInput, onDrop } =
-    useFileUpload();
+  const { fileInputRef, files, handleRemoveFile, handleTriggerInput, onDrop } = useFileUpload();
 
   useEffect(() => {
     if (upscaleMode === "Conservative") {
@@ -74,30 +69,11 @@ const Upscale = () => {
             ))}
           </Select>
 
-          <Textarea
-            className="max-w-xs"
-            isRequired={upscaleMode === "Creative"}
-            label="Prompt"
-            placeholder="Enter your description"
-            size="lg"
-            variant="bordered"
-          />
+          <Textarea className="max-w-xs" isRequired={upscaleMode === "Creative"} label="Prompt" placeholder="Enter your description" size="lg" variant="bordered" />
 
-          <Textarea
-            className="max-w-xs"
-            label="Negative prompt"
-            placeholder="Enter your description"
-            size="sm"
-            variant="bordered"
-          />
+          <Textarea className="max-w-xs" label="Negative prompt" placeholder="Enter your description" size="sm" variant="bordered" />
 
-          <Slider
-            className="max-w-md"
-            getValue={(donuts) => `${donuts} of 60 Donuts`}
-            label="Creativity"
-            maxValue={60}
-            size="sm"
-          />
+          <Slider className="max-w-md" getValue={(donuts) => `${donuts} of 60 Donuts`} label="Creativity" maxValue={60} size="sm" />
 
           <Select
             isRequired

@@ -6,13 +6,9 @@ import { commonColors } from "@nextui-org/theme";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
-export type ToastPosition =
-  | "bottom-center"
-  | "bottom-left"
-  | "bottom-right"
-  | "top-center"
-  | "top-left"
-  | "top-right";
+import { createSupabaseBrowserClient } from "@/utils/supabase/client";
+
+export type ToastPosition = "bottom-center" | "bottom-left" | "bottom-right" | "top-center" | "top-left" | "top-right";
 
 interface HandleError {
   position?: ToastPosition;
@@ -39,6 +35,7 @@ const useHandleFetchError = () => {
   };
 
   const handleError = ({ position = "bottom-right", error }: HandleError) => {
+    console.log(error);
     if (error instanceof AxiosError) {
       if (error.code === "ERR_NETWORK") {
         renderToast("Network error", position);
@@ -55,6 +52,13 @@ const useHandleFetchError = () => {
       }
 
       if (error.response?.status === 401) {
+        if (error.response?.data.message === "Invalid token") {
+          const supabase = createSupabaseBrowserClient();
+
+          supabase.auth.refreshSession();
+
+          return;
+        }
         renderToast(message, position);
       }
 
