@@ -34,7 +34,7 @@ const BackgroundRemoval = () => {
     mutationFn: () => removeBackgroundAPI({ files }),
 
     onSuccess: (data) => {
-      if (imagesBeingProcessed.length > 0) {
+      if (data.imageIds.length > 0) {
         setImagesBeingProcessed([...data.imageIds, ...imagesBeingProcessed]);
 
         return;
@@ -75,24 +75,15 @@ const BackgroundRemoval = () => {
 
   useEffect(() => {
     if (isPosting) {
-      setSkeletonProperties({
-        skeletonsNumber: files.length,
-        isLoading: true,
-      });
+      setSkeletonProperties({ skeletonsNumber: files.length, isLoading: true });
     }
 
     if (imagesBeingProcessed.length > 0) {
-      setSkeletonProperties({
-        skeletonsNumber: imagesBeingProcessed.length,
-        isLoading: true,
-      });
+      setSkeletonProperties({ skeletonsNumber: imagesBeingProcessed.length, isLoading: true });
     }
 
     if (!isPosting && imagesBeingProcessed.length === 0) {
-      setSkeletonProperties({
-        skeletonsNumber: 0,
-        isLoading: false,
-      });
+      setSkeletonProperties({ skeletonsNumber: 0, isLoading: false });
     }
   }, [files.length, imagesBeingProcessed.length, isPosting]);
 
@@ -113,7 +104,7 @@ const BackgroundRemoval = () => {
                 <ScrollShadow hideScrollBar className="flex-[5]">
                   <Stack direction={"row"} flex={5} flexWrap={"wrap"} p={1}>
                     {files.map((f) => {
-                      return <UploadedImage key={generateCUID()} file={f} handleRemoveFile={handleRemoveFile} />;
+                      return <UploadedImage key={f.name} file={f} handleRemoveFile={handleRemoveFile} />;
                     })}
                   </Stack>
                 </ScrollShadow>

@@ -122,11 +122,11 @@ const useImageUpload = ({ multiple = false }: UseImageUpload) => {
     [multiple, validTypes],
   );
 
-  const handleRemoveFile = (f: string) => {
+  const handleRemoveFile = useCallback((f: string) => {
     setFiles((p) => {
       return p.filter((file) => file.name !== f);
     });
-  };
+  }, []);
 
   const handleTriggerInput = () => {
     fileInputRef.current?.click();

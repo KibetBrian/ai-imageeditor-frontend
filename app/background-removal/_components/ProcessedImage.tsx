@@ -8,6 +8,7 @@ import { ProcessedImage as ProcessedImageType } from "../api/api";
 import useBackgroundImageRemovalStore from "../state";
 
 import ImageContainer from "./ImageContainer";
+import ImageSkeleton from "./ImageSkeleton";
 
 import { CloseIcon, DownloadImageIcon, ReloadIcon, WarningExclamation } from "@/assets/icons/icons";
 
@@ -33,7 +34,7 @@ const ProcessedImage = ({ processedImage }: ProcessedImageProps) => {
 
   return (
     <ImageContainer>
-      {status !== "processed" && (
+      {status === "failed" && (
         <Stack alignItems={"center"} height={"100%"} justifyContent={"center"} position={"relative"} spacing={2}>
           <Stack direction={"row"} justifyContent={"space-between"} left={"0%"} position={"absolute"} top={"0%"} width={"100%"}>
             <Chip className="text-white" color="warning" radius="sm" size="sm" startContent={<WarningExclamation className="w-[15px]" />}>
@@ -50,6 +51,9 @@ const ProcessedImage = ({ processedImage }: ProcessedImageProps) => {
           </Button>
         </Stack>
       )}
+
+      {status === "processing" && <ImageSkeleton />}
+
       {status === "processed" && (
         <Stack spacing={1}>
           <Typography variant="subtitle2"> {imageName.split("").slice(0, 10).join("")}</Typography>
