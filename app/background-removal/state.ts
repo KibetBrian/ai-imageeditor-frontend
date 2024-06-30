@@ -11,6 +11,7 @@ interface BackgroundImageRemovalState {
   processedImages: ProcessedImage[];
   setProcessedImages: (processedImages: ProcessedImage[]) => void;
   removeProcessedImage: (imageId: string) => void;
+  resetStore: () => void;
 }
 
 const useBackgroundImageRemovalStore = create<BackgroundImageRemovalState>()(
@@ -22,6 +23,7 @@ const useBackgroundImageRemovalStore = create<BackgroundImageRemovalState>()(
       removeProcessedImage: (imageId: string) => set((state) => ({ processedImages: state.processedImages.filter((image) => image.imageId !== imageId) })),
       setImagesBeingProcessed: (imageIds: string[]) => set({ imagesBeingProcessed: imageIds }),
       removeImageBeingProcessed: (imageId: string) => set((state) => ({ imagesBeingProcessed: state.imagesBeingProcessed.filter((id) => id !== imageId) })),
+      resetStore: () => set({ imagesBeingProcessed: [], processedImages: [] }),
     }),
     {
       name: "image-background-removal",

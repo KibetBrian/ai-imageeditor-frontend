@@ -295,3 +295,11 @@ export function WarningExclamation(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function EditIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg height={48} viewBox="0 0 24 24" width={48} xmlns="http://www.w3.org/2000/svg" {...props}>
+      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM21.41 6.34l-3.75-3.75l-2.53 2.54l3.75 3.75z" fill="currentColor" />
+    </svg>
+  );
+}

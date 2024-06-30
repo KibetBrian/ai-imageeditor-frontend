@@ -46,7 +46,7 @@ export const removeBackgroundAPI = async ({ files }: RemoveBackgroundAPI): Promi
 export interface ProcessedImage {
   status: "processing" | "processed" | "failed";
   imageId: string;
-  imageBase64: string;
+  base64Image: string;
   imageName: string;
 }
 

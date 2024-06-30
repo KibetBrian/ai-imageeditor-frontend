@@ -9,3 +9,7 @@ export const getImageUrlFromMimeTypeFile = (file: MimeTypeFile) => {
 
   return imageUrl;
 };
+
+export function base64ToBlob(base64: string, contentType = ""): Promise<Blob> {
+  return fetch(`data:${contentType};base64,${base64}`).then((res) => res.blob());
+}

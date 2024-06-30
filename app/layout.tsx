@@ -1,6 +1,5 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
-import clsx from "clsx";
 
 import TopBar from "../components/topbar/TopBar";
 
@@ -11,6 +10,7 @@ import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import SideBar from "@/components/sidebar/SideBar";
 import { createSupabaseServerClient } from "@/utils/supabase/server";
+import { cn } from "@/utils/utils";
 
 export const metadata: Metadata = {
   title: {
@@ -38,7 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html suppressHydrationWarning lang="en">
       <head />
-      <body className={clsx("min-h-screen bg-background font-sans antialiased ", fontSans.variable)}>
+      <body className={cn("min-h-screen bg-background font-sans antialiased ", fontSans.className, fontSans.variable)}>
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex flex-col h-screen">
             <div className="flex-1 absolute top-[50%] right-[0%] h-[200px] w-[400px] bg-blue-950 blur-[100px]" />

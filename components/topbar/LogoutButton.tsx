@@ -5,6 +5,7 @@ import { Tooltip } from "@nextui-org/tooltip";
 import React, { useState } from "react";
 
 import { createSupabaseBrowserClient } from "@/utils/supabase/client";
+import useLogout from "@/hooks/useLogout";
 
 interface LogoutButtonProps {
   avatarUrl: string;
@@ -12,6 +13,8 @@ interface LogoutButtonProps {
 
 const LogoutButton = ({ avatarUrl }: LogoutButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
+
+  const logout = useLogout();
 
   const supabase = createSupabaseBrowserClient();
 
@@ -22,6 +25,7 @@ const LogoutButton = ({ avatarUrl }: LogoutButtonProps) => {
 
     setIsLoading(false);
 
+    logout();
     window.location.reload();
   };
 

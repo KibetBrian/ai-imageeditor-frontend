@@ -17,11 +17,11 @@ interface ProcessedImageProps {
 }
 
 const ProcessedImage = ({ processedImage }: ProcessedImageProps) => {
-  const { imageName, imageBase64, status, imageId } = processedImage;
+  const { imageName, base64Image, status, imageId } = processedImage;
 
   const { removeProcessedImage } = useBackgroundImageRemovalStore();
 
-  const imageUrl = `data:image/png;base64,${imageBase64}`;
+  const imageUrl = `data:image/png;base64,${base64Image}`;
 
   const handleDownload = () => {
     const downloadAnchor = document.createElement("a");

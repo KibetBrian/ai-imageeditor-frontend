@@ -1,15 +1,17 @@
+"use client";
 import React from "react";
 import { Stack } from "@mui/material";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import Image from "next/image";
 import { useDisclosure } from "@nextui-org/modal";
+import { useRouter } from "next/navigation";
 
 import { imageContainerDimensions } from "../constants";
 
 import ImageContainer from "./ImageContainer";
 
-import { CloseIcon } from "@/assets/icons/icons";
+import { CloseIcon, EditIcon } from "@/assets/icons/icons";
 import CustomModal from "@/components/modal/CustomModal";
 
 interface UploadedImageProps {
@@ -19,6 +21,8 @@ interface UploadedImageProps {
 
 const UploadedImage = ({ file, handleRemoveFile }: UploadedImageProps) => {
   const imageUrl = URL.createObjectURL(file);
+
+  const router = useRouter();
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -39,14 +43,17 @@ const UploadedImage = ({ file, handleRemoveFile }: UploadedImageProps) => {
           </Stack>
         }
         footer={
-          <Stack>
+          <Stack alignItems={"center"} direction={"row"} spacing={2}>
+            <Button endContent={<EditIcon className="w-[20px]" />} radius="sm" onClick={() => router.push("/editor")}>
+              Edit
+            </Button>
             <Button radius="sm" variant="ghost" onClick={onOpenChange}>
               Close
             </Button>
           </Stack>
         }
         isOpen={isOpen}
-        size="2xl"
+        size="3xl"
         title={file.name}
         onOpenChange={onOpenChange}
       />
