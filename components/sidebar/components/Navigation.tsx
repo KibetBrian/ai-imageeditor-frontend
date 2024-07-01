@@ -8,6 +8,7 @@ import { commonColors } from "@nextui-org/theme";
 
 import { navData } from "../data";
 import { NavItem } from "../types";
+import { useSidebarStore } from "../state";
 
 import useMounted from "@/hooks/useMounted";
 
@@ -16,7 +17,7 @@ const Navigation = () => {
 
   const mounted = useMounted();
 
-  const [selectedMenu, setSelectedMenu] = React.useState(navData[0]);
+  const { selectedMenu, setSelectedMenu } = useSidebarStore();
 
   const handleMenuClick = (item: NavItem) => {
     setSelectedMenu(item);

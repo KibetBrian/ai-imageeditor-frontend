@@ -15,13 +15,7 @@ import { useMutation } from "@tanstack/react-query";
 import { dataUrlToFile } from "./utils";
 
 import useImageUpload from "@/hooks/useImageUpload";
-import {
-  ApplyIcon,
-  BackIcon,
-  DownloadImageIcon,
-  ForwardIcon,
-  UploadImageIcon,
-} from "@/assets/icons/icons";
+import { ApplyIcon, BackIcon, DownloadImageIcon, ForwardIcon, UploadImageIcon } from "@/assets/icons/icons";
 import useHandleFetchError from "@/hooks/useHandleError";
 import { appConfigs } from "@/config/app";
 import useStack from "@/hooks/useStack";
@@ -29,16 +23,7 @@ import useStack from "@/hooks/useStack";
 const ObjectRemoval = () => {
   const handleFetchError = useHandleFetchError();
 
-  const {
-    isRedoEmpty,
-    peekUndo,
-    pushToUndoStack,
-    isUndoEmpty,
-    popRedo,
-    popUndo,
-    clearStack,
-    getUndoStackLength,
-  } = useStack();
+  const { isRedoEmpty, peekUndo, pushToUndoStack, isUndoEmpty, popRedo, popUndo, clearStack, getUndoStackLength } = useStack();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasInstanceRef = useRef<fabric.Canvas | null>(null);
@@ -56,9 +41,7 @@ const ObjectRemoval = () => {
     scaleFactor: 0,
   };
 
-  const [imageProperties, setImageProperties] = useState(
-    defaultImageProperties,
-  );
+  const [imageProperties, setImageProperties] = useState(defaultImageProperties);
 
   const canvasWidth = 800;
   const canvasHeight = 500;
@@ -220,20 +203,14 @@ const ObjectRemoval = () => {
 
       const formData = new FormData();
 
-      formData.append(
-        "files",
-        dataUrlToFile({ dataUrl, filename: "mask.png" }),
-      );
+      formData.append("files", dataUrlToFile({ dataUrl, filename: "mask.png" }));
 
       formData.append("files", selectedImage as File);
 
-      const response = await fetch(
-        `${appConfigs.backend}process/object-removal`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
+      const response = await fetch(`${appConfigs.backend}process/object-removal`, {
+        method: "POST",
+        body: formData,
+      });
 
       const responseData = await response.json();
 
@@ -251,11 +228,7 @@ const ObjectRemoval = () => {
     <Stack height={"100%"}>
       <Stack alignItems={"center"} flex={10} height={"100%"}>
         <Stack display={selectedImage ? "block" : "none"} spacing={1}>
-          <Stack
-            alignItems={"center"}
-            direction={"row"}
-            justifyContent={"space-between"}
-          >
+          <Stack alignItems={"center"} direction={"row"} justifyContent={"space-between"}>
             <Tooltip content="Undo">
               <Button
                 isIconOnly
@@ -280,27 +253,16 @@ const ObjectRemoval = () => {
               startContent={
                 <Popover placement="bottom" showArrow={true}>
                   <PopoverTrigger>
-                    <Card
-                      className="w-[20px] h-[20px] "
-                      radius="sm"
-                      style={{ backgroundColor: penProperties.color }}
-                    />
+                    <Card className="w-[20px] h-[20px] " radius="sm" style={{ backgroundColor: penProperties.color }} />
                   </PopoverTrigger>
                   <PopoverContent>
-                    <HexColorPicker
-                      color={penProperties.color}
-                      onChange={(e) =>
-                        setPenProperties((p) => ({ ...p, color: e }))
-                      }
-                    />
+                    <HexColorPicker color={penProperties.color} onChange={(e) => setPenProperties((p) => ({ ...p, color: e }))} />
                   </PopoverContent>
                 </Popover>
               }
               step={1}
               value={penProperties.width}
-              onChange={(e) =>
-                setPenProperties((p) => ({ ...p, width: e as number }))
-              }
+              onChange={(e) => setPenProperties((p) => ({ ...p, width: e as number }))}
             />
             <Tooltip content="Redo">
               <Button
@@ -319,11 +281,7 @@ const ObjectRemoval = () => {
           </Stack>
           <canvas ref={canvasRef} />
 
-          <Stack
-            alignItems={"center"}
-            direction={"row"}
-            justifyContent={"space-between"}
-          >
+          <Stack alignItems={"center"} direction={"row"} justifyContent={"space-between"}>
             <Button
               endContent={<UploadImageIcon className="w-[20px]" />}
               onClick={() => {
@@ -334,30 +292,18 @@ const ObjectRemoval = () => {
               Change Image
             </Button>
             <Stack direction={"row"} spacing={2}>
-              <Button
-                endContent={<ApplyIcon className="w-[20px]" />}
-                isLoading={status === "pending"}
-                onClick={() => mutate()}
-              >
+              <Button endContent={<ApplyIcon className="w-[20px]" />} isLoading={status === "pending"} onClick={() => mutate()}>
                 Apply
               </Button>
               {getUndoStackLength() > 1 && (
-                <Button
-                  endContent={<DownloadImageIcon className="w-[20px]" />}
-                  onClick={handleDownloadImage}
-                >
+                <Button endContent={<DownloadImageIcon className="w-[20px]" />} onClick={handleDownloadImage}>
                   Download
                 </Button>
               )}
             </Stack>
           </Stack>
         </Stack>
-        <Stack
-          alignItems={"center"}
-          height={"100%"}
-          style={{ display: selectedImage ? "none" : "flex" }}
-          width={"100%"}
-        >
+        <Stack alignItems={"center"} height={"100%"} style={{ display: selectedImage ? "none" : "flex" }} width={"100%"}>
           <DropzoneArea />
         </Stack>
       </Stack>
