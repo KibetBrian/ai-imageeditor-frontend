@@ -1,90 +1,72 @@
 /* eslint-disable max-lines-per-function */
-/* eslint-disable no-magic-numbers */
 "use client";
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
+import { commonColors } from "@nextui-org/theme";
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
-import { Button } from "@nextui-org/button";
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 import { Slider } from "@nextui-org/slider";
-import { HexColorPicker } from "react-colorful";
+import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import { Card } from "@nextui-org/card";
+import { HexColorPicker } from "react-colorful";
 import { Tooltip } from "@nextui-org/tooltip";
+import { Button } from "@nextui-org/button";
 import { useMutation } from "@tanstack/react-query";
 
+import { objectRemovalPostApi } from "./api";
 import { dataUrlToFile } from "./utils";
 
-import useImageUpload from "@/hooks/useImageUpload";
 import { ApplyIcon, BackIcon, DownloadImageIcon, ForwardIcon, UploadImageIcon } from "@/assets/icons/icons";
-import useHandleFetchError from "@/hooks/useHandleError";
-import { appConfigs } from "@/config/app";
 import useStack from "@/hooks/useStack";
+import useImageUpload from "@/hooks/useImageUpload";
+import useHandleFetchError from "@/hooks/useHandleError";
 
-const ObjectRemoval = () => {
+const canvasWidth = 800;
+const canvasHeight = 500;
+const imagePaddingLeft = 0.1;
+const imagePaddingTop = 0.05;
+
+const defaultImageProperties = {
+  width: 0,
+  height: 0,
+  left: 0,
+  top: 0,
+  scaleFactor: 0,
+};
+
+const ImageObjectRemoval = () => {
   const handleFetchError = useHandleFetchError();
 
-  const { isRedoEmpty, peekUndo, pushToUndoStack, isUndoEmpty, popRedo, popUndo, clearStack, getUndoStackLength } = useStack();
-
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   const canvasInstanceRef = useRef<fabric.Canvas | null>(null);
+
+  const { DropzoneArea, handleClickDropzoneContainer, files } = useImageUpload({ multiple: false });
+
+  const { isRedoEmpty, peekUndo, pushToUndoStack, isUndoEmpty, popRedo, popUndo, clearStack, getUndoStackLength } = useStack();
 
   const [penProperties, setPenProperties] = useState({
     color: "#ffffff",
     width: 5,
   });
 
-  const defaultImageProperties = {
-    width: 0,
-    height: 0,
-    left: 0,
-    top: 0,
-    scaleFactor: 0,
-  };
+  useEffect(() => {
+    const canvas = canvasInstanceRef.current;
+
+    if (canvas) {
+      canvas.freeDrawingBrush.color = penProperties.color;
+      canvas.freeDrawingBrush.width = penProperties.width;
+    }
+  }, [penProperties]);
 
   const [imageProperties, setImageProperties] = useState(defaultImageProperties);
 
-  const canvasWidth = 800;
-  const canvasHeight = 500;
-  const imagePaddingLeft = 0.1;
-  const imagePaddingTop = 0.05;
-
-  const { DropzoneArea, handleClickDropzoneContainer, files } = useImageUpload({
-    multiple: false,
-  });
-
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-
   useEffect(() => {
-    if (files.length > 0) {
-      setSelectedImage(files[0]);
-    }
-  }, [files]);
-
-  useEffect(() => {
-    if (canvasRef.current) {
-      canvasInstanceRef.current = new fabric.Canvas(canvasRef.current, {
-        width: canvasWidth,
-        height: canvasHeight,
-        backgroundColor: "#18181B",
-        isDrawingMode: true,
-        selection: false,
-        centeredScaling: true,
-        freeDrawingCursor: "pen",
-      });
-    }
-
-    return () => {
-      canvasInstanceRef.current?.dispose();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (selectedImage && canvasInstanceRef.current) {
+    if (files.length > 0 && canvasInstanceRef.current) {
       // Remove exiting background
       canvasInstanceRef.current?.clear();
       canvasInstanceRef.current.backgroundColor = "#18181B";
 
-      const url = URL.createObjectURL(selectedImage);
+      const url = URL.createObjectURL(files[0]);
 
       fabric.Image.fromURL(url, (img) => {
         pushToUndoStack(url);
@@ -115,16 +97,29 @@ const ObjectRemoval = () => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedImage]);
+  }, [files[0]]);
 
   useEffect(() => {
-    const canvas = canvasInstanceRef.current;
+    if (canvasRef.current) {
+      canvasInstanceRef.current = new fabric.Canvas(canvasRef.current, {
+        width: canvasWidth,
+        height: canvasHeight,
+        backgroundColor: "#18181B",
+        isDrawingMode: true,
+        selection: false,
+        centeredScaling: true,
+        freeDrawingCursor: "pen",
+      });
 
-    if (canvas) {
-      canvas.freeDrawingBrush.color = penProperties.color;
-      canvas.freeDrawingBrush.width = penProperties.width;
+      canvasInstanceRef.current.freeDrawingBrush.color = penProperties.color;
+      canvasInstanceRef.current.freeDrawingBrush.width = penProperties.width;
     }
-  }, [penProperties]);
+
+    return () => {
+      canvasInstanceRef.current?.dispose();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!imageProperties.height) return;
@@ -147,6 +142,7 @@ const ObjectRemoval = () => {
         });
         canvas.renderOnAddRemove = false;
         canvas.clear();
+        canvas.backgroundColor = "#18181B";
         canvas.add(img);
         canvas.renderAll();
       });
@@ -154,7 +150,9 @@ const ObjectRemoval = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [peekUndo()]);
 
-  const handleDownloadImage = () => {
+  const getCanvasImageFile = () => {
+    if (!canvasInstanceRef.current) return;
+
     const dataUrl = canvasInstanceRef.current?.toDataURL({
       format: "png",
       ...imageProperties,
@@ -162,14 +160,9 @@ const ObjectRemoval = () => {
     });
 
     if (dataUrl) {
-      const a = document.createElement("a");
-
-      a.href = dataUrl;
-      a.download = selectedImage?.name || "image.png";
-      a.click();
+      return dataUrlToFile({ dataUrl, filename: "mask.png" });
     }
   };
-
   const handleSuccess = (data: { message: string; image: string }) => {
     const url = `data:image/png;base64,${data.image}`;
 
@@ -191,43 +184,52 @@ const ObjectRemoval = () => {
     });
   };
 
+  const handleDownloadImage = () => {
+    const dataUrl = canvasInstanceRef.current?.toDataURL({
+      format: "png",
+      ...imageProperties,
+      quality: 1,
+    });
+
+    if (dataUrl) {
+      const a = document.createElement("a");
+
+      a.href = dataUrl;
+      a.download = files[0]?.name || "image.png";
+      a.click();
+    }
+  };
+
   const { mutate, status } = useMutation({
-    mutationFn: async () => {
-      const dataUrl = canvasInstanceRef.current?.toDataURL({
-        format: "png",
-        ...imageProperties,
-        quality: 1,
-      });
-
-      if (!dataUrl) throw new Error("error processing image");
-
-      const formData = new FormData();
-
-      formData.append("files", dataUrlToFile({ dataUrl, filename: "mask.png" }));
-
-      formData.append("files", selectedImage as File);
-
-      const response = await fetch(`${appConfigs.backend}process/object-removal`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const responseData = await response.json();
-
-      const isSuccess = response.status >= 200 && response.status < 300;
-
-      if (!isSuccess) throw new Error(responseData.message);
-
-      return responseData;
-    },
+    mutationFn: async () => objectRemovalPostApi({ image: files[0], mask: getCanvasImageFile()! }),
     onError: (e) => handleFetchError({ error: e }),
     onSuccess: handleSuccess,
   });
 
   return (
-    <Stack height={"100%"}>
-      <Stack alignItems={"center"} flex={10} height={"100%"}>
-        <Stack display={selectedImage ? "block" : "none"} spacing={1}>
+    <Stack height={"100%"} spacing={5}>
+      {files.length === 0 && (
+        <Stack>
+          <Typography fontSize={"20px"} variant="subtitle1">
+            Image Object Removal
+          </Typography>
+          <Typography color={commonColors.zinc[400]} variant="caption">
+            Shade part of the image you want to remove
+          </Typography>
+        </Stack>
+      )}
+
+      {files.length === 0 && (
+        <Stack direction={"row"} height={"100%"}>
+          <Stack alignItems={"center"} flex={1} justifyContent={"center"}>
+            <DropzoneArea />
+          </Stack>
+          <Stack flex={1}>Results illustration</Stack>
+        </Stack>
+      )}
+
+      <Stack alignItems={"center"} display={files.length === 0 ? "none" : "flex"} height={"100%"} justifyContent={"center"} width={"100%"}>
+        <Stack flex={10} spacing={2}>
           <Stack alignItems={"center"} direction={"row"} justifyContent={"space-between"}>
             <Tooltip content="Undo">
               <Button
@@ -280,10 +282,10 @@ const ObjectRemoval = () => {
             </Tooltip>
           </Stack>
           <canvas ref={canvasRef} />
-
           <Stack alignItems={"center"} direction={"row"} justifyContent={"space-between"}>
             <Button
               endContent={<UploadImageIcon className="w-[20px]" />}
+              radius="sm"
               onClick={() => {
                 clearStack();
                 handleClickDropzoneContainer();
@@ -292,7 +294,7 @@ const ObjectRemoval = () => {
               Change Image
             </Button>
             <Stack direction={"row"} spacing={2}>
-              <Button endContent={<ApplyIcon className="w-[20px]" />} isLoading={status === "pending"} onClick={() => mutate()}>
+              <Button endContent={<ApplyIcon className="w-[20px]" />} isLoading={status === "pending"} radius="sm" onClick={() => mutate()}>
                 Apply
               </Button>
               {getUndoStackLength() > 1 && (
@@ -303,12 +305,9 @@ const ObjectRemoval = () => {
             </Stack>
           </Stack>
         </Stack>
-        <Stack alignItems={"center"} height={"100%"} style={{ display: selectedImage ? "none" : "flex" }} width={"100%"}>
-          <DropzoneArea />
-        </Stack>
       </Stack>
     </Stack>
   );
 };
 
-export default ObjectRemoval;
+export default ImageObjectRemoval;
