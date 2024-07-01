@@ -1,11 +1,5 @@
-import useBackgroundImageRemovalStore from "@/app/background-removal/state";
-
 const useLogout = () => {
-  const { resetStore } = useBackgroundImageRemovalStore();
-
-  const handleLogout = () => {
-    resetStore();
-  };
+  const handleLogout = () => {};
 
   return handleLogout;
 };

@@ -1,22 +1,32 @@
 import React from "react";
-import { Stack, Typography } from "@mui/material";
-import Image from "next/image";
+import { Box, Stack, Typography } from "@mui/material";
 import { Button } from "@nextui-org/button";
 import { Chip } from "@nextui-org/chip";
+import { useDisclosure } from "@nextui-org/modal";
+import { Tooltip } from "@nextui-org/tooltip";
+import ReactCompareImage from "react-compare-image";
 
-import { ProcessedImage as ProcessedImageType } from "../api/api";
 import useBackgroundImageRemovalStore from "../state";
+import { ProcessedImage as ProcessedImageType } from "../types";
+import { imageContainerDimensions } from "../constants";
 
 import ImageContainer from "./ImageContainer";
 import ImageSkeleton from "./ImageSkeleton";
 
-import { CloseIcon, DownloadImageIcon, ReloadIcon, WarningExclamation } from "@/assets/icons/icons";
+import { CloseIcon, CompareImageIcon, DownloadIcon, DownloadImageIcon, EditIcon, ReloadIcon, WarningExclamation } from "@/assets/icons/icons";
+import CustomModal from "@/components/modal/CustomModal";
 
 interface ProcessedImageProps {
   processedImage: ProcessedImageType;
 }
 
 const ProcessedImage = ({ processedImage }: ProcessedImageProps) => {
+  const [hovered, setHovered] = React.useState(false);
+
+  const { uploadedImages } = useBackgroundImageRemovalStore();
+
+  const { onClose, isOpen, onOpenChange } = useDisclosure();
+
   const { imageName, base64Image, status, imageId } = processedImage;
 
   const { removeProcessedImage } = useBackgroundImageRemovalStore();
@@ -31,6 +41,10 @@ const ProcessedImage = ({ processedImage }: ProcessedImageProps) => {
 
     downloadAnchor.click();
   };
+
+  const uploadedImage = uploadedImages.find((image) => image.name === imageName);
+
+  const uploadedImageURL = !uploadedImage ? "" : URL.createObjectURL(uploadedImage);
 
   return (
     <ImageContainer>
@@ -55,14 +69,94 @@ const ProcessedImage = ({ processedImage }: ProcessedImageProps) => {
       {status === "processing" && <ImageSkeleton />}
 
       {status === "processed" && (
-        <Stack spacing={1}>
-          <Typography variant="subtitle2"> {imageName.split("").slice(0, 10).join("")}</Typography>
+        <Stack alignItems={"center"} display={"flex"} justifyContent={"center"} spacing={1} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+          <CustomModal
+            body={
+              <Stack alignItems={"center"} height={"100%"} justifyContent={"center"} spacing={2}>
+                <Box
+                  sx={{
+                    width: imageContainerDimensions.width * 1.2,
+                    height: imageContainerDimensions.height,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <ReactCompareImage
+                    aspectRatio="wider"
+                    leftImage={uploadedImageURL}
+                    leftImageCss={{ width: "100%", height: "100%" }}
+                    rightImage={imageUrl}
+                    rightImageCss={{ width: "100%", height: "100%" }}
+                  />
+                </Box>
+              </Stack>
+            }
+            footer={
+              <Stack direction={"row"} justifyContent={"flex-end"} spacing={2}>
+                <Button radius="sm" size="sm" startContent={<EditIcon className="w-[15px]" />} variant="flat" onClick={onClose}>
+                  Edit
+                </Button>
+                <Button radius="sm" size="sm" startContent={<DownloadIcon className="w-[15px]" />} onClick={handleDownload}>
+                  Download
+                </Button>
+                <Button radius="sm" size="sm" variant="flat" onClick={onClose}>
+                  Close
+                </Button>
+              </Stack>
+            }
+            header={
+              <Stack>
+                <Typography variant="subtitle1">{imageName}</Typography>
 
-          <Image alt={imageName} height={200} src={imageUrl} width={200} />
-
-          <Stack alignItems={"center"} direction={"row"} justifyContent={"flex-end"}>
-            <Button size="sm" startContent={<DownloadImageIcon className="w-[20px]" />} onClick={handleDownload} />
+                <Stack>
+                  <Button size="sm" startContent={<CompareImageIcon />}>
+                    Compare
+                  </Button>
+                </Stack>
+              </Stack>
+            }
+            height="80vh"
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+          />
+          <Stack
+            position={"absolute"}
+            sx={{
+              bottom: 0,
+              left: 0,
+              width: "100%",
+              display: hovered ? "flex" : "none",
+            }}
+          >
+            <Stack alignItems={"center"} direction={"row"} justifyContent={"space-between"} p={1}>
+              <Tooltip content="Edit Image">
+                <Button isIconOnly endContent={<EditIcon className="w-[15px]" />} size="sm" onClick={handleDownload} />
+              </Tooltip>
+              <Tooltip content="Download Image">
+                <Button isIconOnly endContent={<DownloadImageIcon className="w-[15px]" />} size="sm" onClick={handleDownload} />
+              </Tooltip>
+            </Stack>
           </Stack>
+          <Box
+            sx={{
+              width: imageContainerDimensions.width,
+              height: imageContainerDimensions.height,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onClick={onOpenChange}
+          >
+            <img
+              alt={imageName}
+              src={imageUrl}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+              }}
+            />
+          </Box>
         </Stack>
       )}
     </ImageContainer>

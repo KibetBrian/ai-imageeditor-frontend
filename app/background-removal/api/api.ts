@@ -1,13 +1,15 @@
 import axios from "axios";
 import { StatusCodes } from "http-status-codes";
 
+import { ProcessedImage } from "../types";
+
 import { appConfigs } from "@/config/app";
 import { createSupabaseBrowserClient } from "@/utils/supabase/client";
 
 const supabase = createSupabaseBrowserClient();
 
 interface RemoveBackgroundAPI {
-  files: File[];
+  uploadedImages: File[];
 }
 
 export interface RemoveBackgroundResponse {
@@ -15,12 +17,12 @@ export interface RemoveBackgroundResponse {
   message: string;
 }
 
-export const removeBackgroundAPI = async ({ files }: RemoveBackgroundAPI): Promise<RemoveBackgroundResponse> => {
+export const removeBackgroundAPI = async ({ uploadedImages }: RemoveBackgroundAPI): Promise<RemoveBackgroundResponse> => {
   const accessToken = (await supabase.auth.getSession()).data.session?.access_token;
 
   const formData = new FormData();
 
-  files.forEach((f) => {
+  uploadedImages.forEach((f) => {
     formData.append("files", f);
   });
 
@@ -42,13 +44,6 @@ export const removeBackgroundAPI = async ({ files }: RemoveBackgroundAPI): Promi
 
   return response.data;
 };
-
-export interface ProcessedImage {
-  status: "processing" | "processed" | "failed";
-  imageId: string;
-  base64Image: string;
-  imageName: string;
-}
 
 interface GetProcessedImageResponse {
   images: ProcessedImage[];

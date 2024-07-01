@@ -17,6 +17,7 @@ const ImageContainer = ({ children }: ImageContainerProps) => {
       style={{
         width: `${imageContainerDimensions.width}px`,
         height: `${imageContainerDimensions.height}px`,
+        position: "relative",
       }}
     >
       {children}

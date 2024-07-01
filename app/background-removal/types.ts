@@ -1,3 +1,5 @@
+type Status = "processing" | "processed" | "failed";
+
 export interface MimeTypeFile {
   buffer: {
     type: string;
@@ -14,4 +16,11 @@ export interface MimeTypeFile {
 export interface RemoveBackgroundProcessingResults {
   message: string;
   files: MimeTypeFile[];
+}
+export interface ProcessedImage {
+  imageId: string;
+  base64Image: string;
+  imageName: string;
+  status: Status;
+  message: string;
 }

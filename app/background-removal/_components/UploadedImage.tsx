@@ -1,45 +1,78 @@
 "use client";
-import React from "react";
-import { Stack } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Stack, Typography } from "@mui/material";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
-import Image from "next/image";
 import { useDisclosure } from "@nextui-org/modal";
 import { useRouter } from "next/navigation";
 
+import { getImageDimensions } from "../utils";
 import { imageContainerDimensions } from "../constants";
 
 import ImageContainer from "./ImageContainer";
 
 import { CloseIcon, EditIcon } from "@/assets/icons/icons";
 import CustomModal from "@/components/modal/CustomModal";
+import useMounted from "@/hooks/useMounted";
 
 interface UploadedImageProps {
-  file: File;
-  handleRemoveFile: (fileName: string) => void;
+  uploadedImage: File;
+  handleRemoveImage: (image: string) => void;
 }
 
-const UploadedImage = ({ file, handleRemoveFile }: UploadedImageProps) => {
-  const imageUrl = URL.createObjectURL(file);
+const UploadedImage = ({ uploadedImage, handleRemoveImage }: UploadedImageProps) => {
+  const mounted = useMounted();
+
+  const [imageProperties, setImageProperties] = useState<{ width: number; height: number; url: string } | null>(null);
+
+  useEffect(() => {
+    getImageDimensions(uploadedImage).then((properties) => {
+      setImageProperties(properties);
+    });
+  }, [uploadedImage]);
 
   const router = useRouter();
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  if (!mounted) return null;
 
   return (
     <ImageContainer>
       <Stack alignItems={"center"} height={"100%"} justifyContent={"center"} position={"relative"} onClick={onOpen}>
         <Stack direction={"row"} justifyContent={"space-between"} left={"0%"} p={1} position={"absolute"} top={"0%"} width={"100%"}>
           <Tooltip content="Remove" radius="sm">
-            <Button isIconOnly size="sm" startContent={<CloseIcon className="w-[10px]" />} onClick={() => handleRemoveFile(file.name)} />
+            <Button isIconOnly size="sm" startContent={<CloseIcon className="w-[10px]" />} onClick={() => handleRemoveImage(uploadedImage.name)} />
           </Tooltip>
         </Stack>
-        <Image alt={file.name} height={imageContainerDimensions.height} src={imageUrl} width={imageContainerDimensions.width} />
+        <img
+          alt={uploadedImage.name}
+          src={imageProperties?.url}
+          style={{
+            maxWidth: "100%",
+            maxHeight: "100%",
+          }}
+        />
       </Stack>
       <CustomModal
         body={
-          <Stack alignItems={"center"} justifyContent={"center"}>
-            <Image alt={file.name} height={imageContainerDimensions.height} src={imageUrl} width={imageContainerDimensions.width} />
+          <Stack alignItems={"center"} height={"100%"} justifyContent={"center"}>
+            <Box
+              sx={{
+                width: imageContainerDimensions.width,
+                height: imageContainerDimensions.height,
+              }}
+            >
+              <img
+                alt={uploadedImage.name}
+                src={imageProperties?.url}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  transform: "scale(2)",
+                }}
+              />
+            </Box>
           </Stack>
         }
         footer={
@@ -52,9 +85,13 @@ const UploadedImage = ({ file, handleRemoveFile }: UploadedImageProps) => {
             </Button>
           </Stack>
         }
+        header={
+          <Stack>
+            <Typography variant="subtitle1">{uploadedImage.name}</Typography>
+          </Stack>
+        }
+        height="80vh"
         isOpen={isOpen}
-        size="3xl"
-        title={file.name}
         onOpenChange={onOpenChange}
       />
     </ImageContainer>

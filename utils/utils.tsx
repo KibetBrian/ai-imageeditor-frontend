@@ -3,7 +3,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { clsx } from "clsx";
 
 export function cn(...inputs: ClassNameValue[]) {
-  return twMerge(clsx(inputs));
+  return clsx(twMerge(inputs));
 }
 
 type LocalStorageKey = "numberOfImagesToBeGenerated" | "imageGenerationSeed" | "negativePromptActive";

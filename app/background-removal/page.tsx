@@ -28,10 +28,33 @@ const BackgroundRemoval = () => {
 
   const { DropzoneArea, files, handleRemoveFile, handleTriggerInput } = useImageUpload({ multiple: true });
 
-  const { imagesBeingProcessed, setImagesBeingProcessed, processedImages, setProcessedImages, removeImageBeingProcessed } = useBackgroundImageRemovalStore();
+  const {
+    imagesBeingProcessed,
+    removeProcessedImage,
+    addUploadedImage,
+    setImagesBeingProcessed,
+    removeUploadedImage,
+    uploadedImages,
+    processedImages,
+    setProcessedImages,
+    removeImageBeingProcessed,
+  } = useBackgroundImageRemovalStore();
+
+  const handleRemoveImage = (image: string) => {
+    handleRemoveFile(image);
+    removeUploadedImage(image);
+    removeProcessedImage(image);
+  };
+
+  useEffect(() => {
+    for (const file of files) {
+      addUploadedImage(file);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files]);
 
   const { mutate, isPending: isPosting } = useMutation({
-    mutationFn: () => removeBackgroundAPI({ files }),
+    mutationFn: () => removeBackgroundAPI({ uploadedImages }),
 
     onSuccess: (data) => {
       if (data.imageIds.length > 0) {
@@ -75,7 +98,7 @@ const BackgroundRemoval = () => {
 
   useEffect(() => {
     if (isPosting) {
-      setSkeletonProperties({ skeletonsNumber: files.length, isLoading: true });
+      setSkeletonProperties({ skeletonsNumber: uploadedImages.length, isLoading: true });
     }
 
     if (imagesBeingProcessed.length > 0) {
@@ -85,7 +108,7 @@ const BackgroundRemoval = () => {
     if (!isPosting && imagesBeingProcessed.length === 0) {
       setSkeletonProperties({ skeletonsNumber: 0, isLoading: false });
     }
-  }, [files.length, imagesBeingProcessed.length, isPosting]);
+  }, [imagesBeingProcessed.length, isPosting, uploadedImages.length]);
 
   return (
     <Fade in timeout={500}>
@@ -95,23 +118,23 @@ const BackgroundRemoval = () => {
         </Stack>
         <Stack direction={"row"} flex={10} height={"100%"}>
           <Stack flex={1} justifyContent={"center"}>
-            <Stack sx={{ opacity: files.length > 0 ? 0 : 1, zIndex: files.length > 0 ? -1 : 1, position: files.length > 0 ? "absolute" : "relative" }}>
+            <Stack sx={{ opacity: uploadedImages.length > 0 ? 0 : 1, zIndex: uploadedImages.length > 0 ? -1 : 1, position: uploadedImages.length > 0 ? "absolute" : "relative" }}>
               <DropzoneArea />
             </Stack>
 
-            {files.length > 0 && (
+            {uploadedImages.length > 0 && (
               <Fade in timeout={500}>
                 <ScrollShadow hideScrollBar className="flex-[5]">
                   <Stack direction={"row"} flex={5} flexWrap={"wrap"} p={1}>
-                    {files.map((f) => {
-                      return <UploadedImage key={f.name} file={f} handleRemoveFile={handleRemoveFile} />;
+                    {uploadedImages.map((i) => {
+                      return <UploadedImage key={i.name} handleRemoveImage={handleRemoveImage} uploadedImage={i} />;
                     })}
                   </Stack>
                 </ScrollShadow>
               </Fade>
             )}
 
-            {files.length > 0 && (
+            {uploadedImages.length > 0 && (
               <Stack className="w-full" flex={1}>
                 <Fade in timeout={500}>
                   <div className=" w-full flex items-center justify-end">
@@ -155,7 +178,7 @@ const BackgroundRemoval = () => {
               </Stack>
             </Stack>
 
-            {(files.length > 0 || imagesBeingProcessed.length > 0) && (
+            {uploadedImages.length > 0 && processedImages.length === 0 && !isPosting && (
               <Typography alignSelf={"center"} variant="subtitle2">
                 Processed images will appear here
               </Typography>
@@ -173,7 +196,7 @@ const BackgroundRemoval = () => {
                   </Stack>
                 )}
 
-                {files.length === 0 && imagesBeingProcessed.length === 0 && processedImages.length === 0 && (
+                {uploadedImages.length === 0 && imagesBeingProcessed.length === 0 && processedImages.length === 0 && (
                   <Stack height={"100%"} justifyContent={"center"} width={"100%"}>
                     <Stack height={400} width={600}>
                       <ReactCompareImage

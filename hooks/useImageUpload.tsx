@@ -14,40 +14,6 @@ interface UseImageUpload {
   multiple?: boolean;
 }
 
-interface ImageDimensions {
-  width: number;
-  height: number;
-}
-
-const validateImageDimensions = (dimensions: ImageDimensions) => {
-  const minSideLength = 64;
-  const maxPixelCount = 9437184;
-
-  // Check if every side is at least 64 pixels
-  if (dimensions.width < minSideLength || dimensions.height < minSideLength) {
-    return {
-      valid: false,
-      message: "file too small, minimum allowed is 64x64 pixels",
-    };
-  }
-
-  // Calculate total pixel count
-  const totalPixels = dimensions.width * dimensions.height;
-
-  // Check if total pixel count exceeds the maximum allowed
-  if (totalPixels > maxPixelCount) {
-    return {
-      valid: false,
-      message: "file too large, maximum allowed is 9437184 pixels",
-    };
-  }
-
-  return {
-    valid: true,
-    message: "",
-  };
-};
-
 const useImageUpload = ({ multiple = false }: UseImageUpload) => {
   const validTypes = useMemo(() => ["image/jpeg", "image/png", "image/webp"], []);
 
@@ -81,33 +47,6 @@ const useImageUpload = ({ multiple = false }: UseImageUpload) => {
             );
           });
 
-          continue;
-        }
-
-        const image = new Image();
-
-        image.src = URL.createObjectURL(file);
-
-        const isValidDimensions = await new Promise((resolve) => {
-          image.onload = () => {
-            const dimensions = {
-              width: image.width,
-              height: image.height,
-            };
-
-            const { valid, message } = validateImageDimensions(dimensions);
-
-            if (!valid) {
-              toast.custom(() => {
-                return <ToastComponent fileName={file.name} message={message} />;
-              });
-            }
-
-            resolve(valid);
-          };
-        });
-
-        if (!isValidDimensions) {
           continue;
         }
 
