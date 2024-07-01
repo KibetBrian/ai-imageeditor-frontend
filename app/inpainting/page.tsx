@@ -12,7 +12,7 @@ import { Card } from "@nextui-org/card";
 import { Tooltip } from "@nextui-org/tooltip";
 import { useMutation } from "@tanstack/react-query";
 
-import { dataUrlToFile } from "../object-removal/utils";
+import { dataUrlToFile } from "../object-erasal/utils";
 
 import useImageUpload from "@/hooks/useImageUpload";
 import { ApplyIcon, BackIcon, DownloadImageIcon, ForwardIcon, UploadImageIcon } from "@/assets/icons/icons";

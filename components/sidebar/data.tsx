@@ -16,8 +16,8 @@ export const navData: NavItem[] = [
     icon: BackgroundRemovalIcon,
   },
   {
-    title: "Object Removal",
-    path: "/object-removal",
+    title: "Erase Object",
+    path: "/object-erasal",
     icon: ObjectRemovalIcon,
   },
   {
