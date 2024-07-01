@@ -22,6 +22,7 @@ import useHandleFetchError from "@/hooks/useHandleError";
 import useImageUpload from "@/hooks/useImageUpload";
 import { AddImageIcon, ProcessImageIcon } from "@/assets/icons/icons";
 import { generateCUID } from "@/utils/utils";
+import { downloadImage } from "./utils";
 
 const BackgroundRemoval = () => {
   const handleFetchError = useHandleFetchError();
@@ -48,6 +49,10 @@ const BackgroundRemoval = () => {
 
   useEffect(() => {
     for (const file of files) {
+      const exists = uploadedImages.find((i) => i.name === file.name);
+
+      if (exists) continue;
+
       addUploadedImage(file);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -110,6 +115,14 @@ const BackgroundRemoval = () => {
     }
   }, [imagesBeingProcessed.length, isPosting, uploadedImages.length]);
 
+  const handleDownloadAll = () => {
+    for (const image of processedImages) {
+      const imageUrl = `data:image/png;base64,${image.base64Image}`;
+
+      downloadImage(imageUrl, image.imageName);
+    }
+  };
+
   return (
     <Fade in timeout={500}>
       <Stack height={"100%"} overflow={"hidden"} p={2} width={"100%"}>
@@ -124,7 +137,7 @@ const BackgroundRemoval = () => {
 
             {uploadedImages.length > 0 && (
               <Fade in timeout={500}>
-                <ScrollShadow hideScrollBar className="flex-[5]">
+                <ScrollShadow hideScrollBar className="flex-[10]">
                   <Stack direction={"row"} flex={5} flexWrap={"wrap"} p={1}>
                     {uploadedImages.map((i) => {
                       return <UploadedImage key={i.name} handleRemoveImage={handleRemoveImage} uploadedImage={i} />;
@@ -179,13 +192,13 @@ const BackgroundRemoval = () => {
             </Stack>
 
             {uploadedImages.length > 0 && processedImages.length === 0 && !isPosting && (
-              <Typography alignSelf={"center"} variant="subtitle2">
+              <Typography alignSelf={"center"} flex={1} variant="subtitle2">
                 Processed images will appear here
               </Typography>
             )}
 
-            <Stack alignItems={"center"} direction={"row"} flexWrap={"wrap"} height={"100%"} justifyContent={"center"}>
-              <ScrollShadow hideScrollBar className="h-[calc(100vh-80px)]">
+            <Stack alignItems={"center"} direction={"row"} flex={10} flexWrap={"wrap"} height={"100%"} justifyContent={"center"}>
+              <ScrollShadow hideScrollBar className="h-[100%]">
                 {skeletonProperties.isLoading && <ImageSkeletons imagesLength={skeletonProperties.skeletonsNumber} />}
 
                 {processedImages.length > 0 && (
@@ -212,6 +225,13 @@ const BackgroundRemoval = () => {
                 )}
               </ScrollShadow>
             </Stack>
+            {processedImages.length > 1 && (
+              <Stack direction={"row"} flex={1} justifyContent={"flex-end"}>
+                <Button radius="sm" onClick={handleDownloadAll}>
+                  Download All
+                </Button>
+              </Stack>
+            )}
           </Stack>
         </Stack>
       </Stack>

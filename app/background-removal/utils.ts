@@ -32,3 +32,12 @@ export const getImageDimensions = (file: File): Promise<{ width: number; height:
     };
   });
 };
+
+export const downloadImage = (url: string, name: string) => {
+  const downloadAnchor = document.createElement("a");
+
+  downloadAnchor.href = url;
+  downloadAnchor.download = name;
+
+  downloadAnchor.click();
+};

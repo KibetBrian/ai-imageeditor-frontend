@@ -77,10 +77,10 @@ const UploadedImage = ({ uploadedImage, handleRemoveImage }: UploadedImageProps)
         }
         footer={
           <Stack alignItems={"center"} direction={"row"} spacing={2}>
-            <Button endContent={<EditIcon className="w-[20px]" />} radius="sm" onClick={() => router.push("/editor")}>
+            <Button endContent={<EditIcon className="w-[20px]" />} radius="sm" size="sm" onClick={() => router.push("/editor")}>
               Edit
             </Button>
-            <Button radius="sm" variant="ghost" onClick={onOpenChange}>
+            <Button radius="sm" size="sm" variant="ghost" onClick={onOpenChange}>
               Close
             </Button>
           </Stack>
