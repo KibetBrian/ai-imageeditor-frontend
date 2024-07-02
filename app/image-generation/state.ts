@@ -4,7 +4,7 @@ import type { ImageGenerationModel, AspectRatio } from "./types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { negativePromptsDefaultValue } from "./constants";
+import { models, negativePromptsDefaultValue } from "./constants";
 
 interface ImageGenerationState {
   seed: number;
@@ -26,12 +26,7 @@ interface ImageGenerationState {
 export const useImageGenerationStore = create<ImageGenerationState>()(
   persist(
     (set) => ({
-      model: {
-        name: "Ultra",
-        model: "ultra",
-        cost: 8,
-        description: "A stable diffusion model",
-      },
+      model: models.find((m) => m.model === "core") as ImageGenerationModel,
       aspectRatio: {
         name: "Widescreen",
         ratio: "16:9",

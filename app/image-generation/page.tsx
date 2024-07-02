@@ -2,17 +2,15 @@
 import { Stack } from "@mui/material";
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { StatusCodes } from "http-status-codes";
 
 import { useImageGenerationStore } from "./state";
 import LeftSideBarSettings from "./_components/LeftSideBarSettings";
 import RightSideBarSettings from "./_components/RightSideBarSettings";
 import Center from "./_components/Center";
 import { Image } from "./types";
+import { generateImagePostApi } from "./api";
 
 import useHandleFetchError from "@/hooks/useHandleError";
-import { appConfigs } from "@/config/app";
 
 const ImageGeneration = () => {
   const handleFetchError = useHandleFetchError();
@@ -29,23 +27,18 @@ const ImageGeneration = () => {
     mutationKey: ["generate-image"],
 
     mutationFn: async () => {
-      const results = await axios.post(`${appConfigs.backend}generate/image`, {
+      const payload = {
         numberOfImages: numberofImagesToGenerate,
         aspectRatio: aspectRatio.ratio,
         negativePrompt: negativePromptActive ? negativePrompt : "",
         prompt,
         seed,
         model: model.name.toLowerCase(),
-      });
+      };
 
-      const isStatusValid = results.status >= StatusCodes.OK && results.status < StatusCodes.MULTIPLE_CHOICES;
-
-      if (!isStatusValid) {
-        throw results.data;
-      }
-
-      return results.data;
+      return generateImagePostApi(payload);
     },
+
     onError: (e) => {
       handleFetchError({
         error: e,
@@ -54,7 +47,14 @@ const ImageGeneration = () => {
     },
   });
 
-  const images: Image[] = (data?.images ?? []) as Image[];
+  const imagesBase64: string[] = data?.images || [];
+
+  const images: Image[] = imagesBase64.map((imageBase64) => {
+    return {
+      url: `data:image/jpeg;base64,${imageBase64}`,
+      createdAt: new Date().toISOString(),
+    };
+  });
 
   return (
     <Stack direction={"row"} height={"100%"} spacing={4}>

@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import FeatureCard from "./_components/FeatureCard";
 import { applicationFeatures } from "./constants";
 
+import { GeneratePhotoIcon, SelectCanvasItemIcon } from "@/assets/icons/icons";
+
 const Home = () => {
   const router = useRouter();
 
@@ -16,16 +18,16 @@ const Home = () => {
       <Stack alignItems={"center"} justifyContent={"center"} spacing={5}>
         <Stack spacing={5} width={"80%"}>
           <Stack alignItems={"center"} direction={"row"} justifyContent={"space-between"} width={"90%"}>
-            <Button radius="sm" color="primary" variant="bordered" onClick={() => router.push("/image-generation")}>
+            <Button color="primary" endContent={<GeneratePhotoIcon className="w-[20px]" />} radius="sm" variant="bordered" onClick={() => router.push("/image-generation")}>
               Generate Image
             </Button>
-            <Button radius="sm" color="secondary" variant="bordered" onClick={() => router.push("editor")}>
+            <Button color="secondary" endContent={<SelectCanvasItemIcon className="w-[20px]" />} radius="sm" variant="bordered" onClick={() => router.push("editor")}>
               Edit Image
             </Button>
           </Stack>
           <div className="flex flex-wrap">
             {applicationFeatures.map((f, i) => (
-              <FeatureCard index={i} total={applicationFeatures.length} key={f.title} feature={f} />
+              <FeatureCard key={f.title} feature={f} index={i} total={applicationFeatures.length} />
             ))}
           </div>
         </Stack>

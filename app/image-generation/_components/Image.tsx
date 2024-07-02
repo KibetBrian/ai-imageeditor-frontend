@@ -37,45 +37,42 @@ const Image = ({ img, numberOfImages }: ImageProp) => {
           cursor: "pointer",
         }}
       >
-        <Stack>
-          <Stack
-            alignItems={"end"}
-            direction={"row"}
-            justifyContent={"space-between"}
-            style={{
-              position: "absolute",
-              zIndex: 1,
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
-              color: "white",
-              padding: "5px",
-              bottom: 0,
-              borderRadius: "5px",
-              width: "100%",
-              height: "50%",
-              display: hovered ? "flex" : "none",
-            }}
-          >
-            <Tooltip content="Edit image" size="sm">
-              <Button isIconOnly endContent={<SelectCanvasItemIcon className="w-[20px] h-[20px]" />} onClick={() => router.push("/editor")} />
-            </Tooltip>
-            <Tooltip content="Download image" size="sm">
-              <Button isIconOnly endContent={<DownloadIcon className="w-[20px] h-[20px]" />} />
-            </Tooltip>
-          </Stack>
-          <img
-            alt="Generated"
-            height={getImageDimensions(numberOfImages).height}
-            loading="eager"
-            src={img}
-            style={{
-              objectFit: "contain",
-              // eslint-disable-next-line no-magic-numbers
-              scale: hovered ? 1.05 : 1,
-              transition: "scale 0.5s",
-            }}
-            width={getImageDimensions(numberOfImages).width}
-          />
+        <Stack
+          alignItems={"end"}
+          direction={"row"}
+          justifyContent={"space-between"}
+          style={{
+            position: "absolute",
+            zIndex: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.1)",
+            color: "white",
+            padding: "5px",
+            bottom: 0,
+            borderRadius: "5px",
+            width: "100%",
+            height: "50%",
+            display: hovered ? "flex" : "none",
+          }}
+        >
+          <Tooltip content="Edit image" size="sm">
+            <Button isIconOnly endContent={<SelectCanvasItemIcon className="w-[20px] h-[20px]" />} onClick={() => router.push("/editor")} />
+          </Tooltip>
+          <Tooltip content="Download image" size="sm">
+            <Button isIconOnly endContent={<DownloadIcon className="w-[20px] h-[20px]" />} />
+          </Tooltip>
         </Stack>
+        <img
+          alt="Generated"
+          loading="eager"
+          src={img}
+          style={{
+            objectFit: "contain",
+            scale: hovered ? 1.05 : 1,
+            transition: "scale 0.5s",
+            width: "100%",
+            height: "100%",
+          }}
+        />
       </Card>
     </div>
   );

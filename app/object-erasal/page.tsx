@@ -189,6 +189,8 @@ const ImageObjectRemoval = () => {
       format: "png",
       ...imageProperties,
       quality: 1,
+      width: imageProperties.width,
+      height: imageProperties.height,
     });
 
     if (dataUrl) {

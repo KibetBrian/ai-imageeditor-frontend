@@ -77,9 +77,9 @@ const ProcessedImage = ({ processedImage }: ProcessedImageProps) => {
                     <ReactCompareImage
                       aspectRatio="wider"
                       leftImage={uploadedImageURL}
-                      leftImageCss={{ width: "100%", height: "100%" }}
+                      leftImageCss={{ width: "100%", height: "100%", objectFit: "contain" }}
                       rightImage={imageUrl}
-                      rightImageCss={{ width: "100%", height: "100%" }}
+                      rightImageCss={{ width: "100%", height: "100%", objectFit: "contain" }}
                     />
                   </Stack>
                 ) : (
